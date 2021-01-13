@@ -4,7 +4,7 @@ module Horse
     export Linear_Regression
     module Linear_Regression
         export SGD
-        module SGD() #this is縲Slope縲Gradient Descent
+        module SGD() #this is Slope Gradient Descent
             function fit(x, t, alpha = 0.001, tau_max = 100000, eps = 0.1)
                 function DMSE(x,t,w)
                     if length(x) != length(t)
@@ -52,8 +52,33 @@ In that case, use ridge regression.")
                 end
             end
             function predict(x, w)
-                x2 = zeros(size(a)[1],1)
+                x2 = zeros(size(x)[1],1)
                 x = hcat(x2, x)
+                return x * w
+            end
+        end
+        module RR()
+            using LinearAlgebra
+            function fit(x, t; alpha = 0.1)
+                w = nothing
+                i = Matrix{Float64}(I, size(x)[2], size(x)[2])
+                println(size(x), size(t))
+                if size(x)[1] == size(t)[1] or size(x)[2] == size(t)[2]
+                    x2 = zeros(size(x)[1], 1)
+                    x = hcat(x2, x)
+                    w = inv(x' * x + alpha * i) * x' * t
+                    println("OK")
+                elseif size(x)[1] == size(t)[2] or size(x)[2] == size(t)[1]
+                    x2 = zeros(1, size(x)[2])
+                    x = vcat(x2, x)
+                    w = inv(x' * x + alpha * i) * x * t
+                    println("OK")
+                end
+                return w
+            end
+            function predict(x, w)
+                x2 = zeros(size(x)[1], 1)
+                x = hcat(x2 * x)
                 return x * w
             end
         end
