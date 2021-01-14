@@ -61,19 +61,14 @@ In that case, use ridge regression.")
             using LinearAlgebra
             function fit(x, t; alpha = 0.1)
                 w = nothing
-                i = Matrix{Float64}(I, size(x)[2], size(x)[2])
-                println(size(x), size(t))
-                if size(x)[1] == size(t)[1] or size(x)[2] == size(t)[2]
-                    x2 = zeros(size(x)[1], 1)
-                    x = hcat(x2, x)
-                    w = inv(x' * x + alpha * i) * x' * t
-                    println("OK")
-                elseif size(x)[1] == size(t)[2] or size(x)[2] == size(t)[1]
-                    x2 = zeros(1, size(x)[2])
-                    x = vcat(x2, x)
-                    w = inv(x' * x + alpha * i) * x * t
-                    println("OK")
+                if size(x)[1] != size(t)[1]#Processing when the matrix is ​​organized by dependent variable
+                    x = x'
+                    t = t'
                 end
+                x2 = zeros(size(x)[1], 1)
+                x = hcat(x2, x)
+                i = Matrix{Float64}(I, size(x)[2], size(x)[2])
+                w = inv(x' * x + alpha * i) * x' * t
                 return w
             end
             function predict(x, w)
