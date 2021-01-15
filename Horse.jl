@@ -3,7 +3,6 @@ module Horse
 
     export Linear_Regression
     module Linear_Regression
-        export SGD
         module SGD() #this is Slope Gradient Descent
             function fit(x, t, alpha = 0.001, tau_max = 100000, eps = 0.1)
                 function DMSE(x,t,w)
@@ -38,8 +37,8 @@ module Horse
                 return t
             end
         end
-        module MR
-　　　　　　function fit(x, t)
+        module MR#this is Multiple Regression
+            function fit(x, t)
                 try
                     w = nothing
                     x2 = zeros(size(x)[1],1)
@@ -57,7 +56,7 @@ In that case, use ridge regression.")
                 return x * w
             end
         end
-        module RR()
+        module RR()#this is Ridge Regression
             using LinearAlgebra
             function fit(x, t; alpha = 0.1)
                 w = nothing
@@ -77,10 +76,41 @@ In that case, use ridge regression.")
                 return x * w
             end
         end
+        module LR()#this is Lasso Regression
+            using LinearAlgebra
+            function sfvf(x, y)
+                sign(x) * maximum(abs(x) - y, 0)
+            end
+            function fit(x, t; alpha = 0.1, tol = 0.0001, mi = 1000000)
+                function update(n, d, x, t, alpha)
+                    l = length(w)
+                    w[1] = sum(t - dot(x, w[2:l])) / n
+                    wvec = ones(n) * w[1]
+                    for k = 1:d
+                        ww = w[1:l]
+                        ww[k] = 0
+                        q = dot(t - wvec - dot(x, ww), x[:, k])
+                        r = dot(x[:, k], x[:, k])
+                        w[k+1] = sfvf(q / r, alpha)
+                    end
+                end
+                w = []
+                n, d = size(x)
+                e = 0.0
+                for i = 1:mi
+                    eb = e
+                    update(n, d, x, t, alpha)
+                    e = sum(abs(w)) / size(w)[1]
+                    if abs(e - eb) <= tol
+                        break
+                    end
+                end
+            end
+        end
     end
 
     export Loss_Function
-    module Loss_Function # this is Mean Square error
+    module Loss_Function # this is Mean Square Error
         export MSE
         function MSE(x, t, w)
         if length(x) != length(t)
