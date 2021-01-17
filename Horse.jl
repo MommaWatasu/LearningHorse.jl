@@ -83,7 +83,7 @@ In that case, use ridge regression.")
         module LR()#this is Lasso Regression
             using LinearAlgebra
             function sfvf(x, y)
-                sign(x) * maximum(abs(x) - y, 0)
+                sign(x) * max(abs(x) - y, 0)
             end
             function fit(x, t; alpha = 0.1, tol = 0.0001, mi = 1000000)
                 function update(n, d, x, t, w, alpha)
@@ -93,9 +93,8 @@ In that case, use ridge regression.")
                     for k = 1:d
                         ww = w[2:l]
                         ww[k] = 0
-                        println(size(vec(t) - wvec - x * ww), size(x[:, k]))
                         q = dot(vec(t) - wvec - x * ww, x[:, k])
-                        r = dot(x[:, k], x[:, k]) #this line has problem
+                        r = dot(x[:, k], x[:, k])
                         w[k+1] = sfvf(q / r, alpha)
                     end
                 end
@@ -109,9 +108,9 @@ In that case, use ridge regression.")
                 for i = 1:mi
                     eb = e
                     update(n, d, x, t, w, alpha)
-                    e = sum(abs(w)) / size(w)[1]
+                    e = sum(broadcast(abs, w)) / size(w)[1]
                     if abs(e - eb) <= tol
-                        break
+                        return w
                     end
                 end
             end
