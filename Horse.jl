@@ -41,6 +41,10 @@ module Horse
             function fit(x, t)
                 try
                     w = nothing
+                    if size(x) != size(t)
+                        x = x'
+                        t = t'
+                    end
                     x2 = zeros(size(x)[1],1)
                     x = hcat(x2, x)
                     w = inv(x' * x) * x' * t
@@ -82,24 +86,29 @@ In that case, use ridge regression.")
                 sign(x) * maximum(abs(x) - y, 0)
             end
             function fit(x, t; alpha = 0.1, tol = 0.0001, mi = 1000000)
-                function update(n, d, x, t, alpha)
+                function update(n, d, x, t, w, alpha)
                     l = length(w)
-                    w[1] = sum(t - dot(x, w[2:l])) / n
+                    w[1] = sum(t - x * w[2:l]) / n#this line has problem
                     wvec = ones(n) * w[1]
                     for k = 1:d
-                        ww = w[1:l]
+                        ww = w[2:l]
                         ww[k] = 0
-                        q = dot(t - wvec - dot(x, ww), x[:, k])
-                        r = dot(x[:, k], x[:, k])
+                        println(size(vec(t) - wvec - x * ww), size(x[:, k]))
+                        q = dot(vec(t) - wvec - x * ww, x[:, k])
+                        r = dot(x[:, k], x[:, k]) #this line has problem
                         w[k+1] = sfvf(q / r, alpha)
                     end
                 end
-                w = []
+                if size(x)[1] != size(t)[1]
+                    x = x'
+                    t = t'
+                end
                 n, d = size(x)
+                w = zeros(d + 1)
                 e = 0.0
                 for i = 1:mi
                     eb = e
-                    update(n, d, x, t, alpha)
+                    update(n, d, x, t, w, alpha)
                     e = sum(abs(w)) / size(w)[1]
                     if abs(e - eb) <= tol
                         break
