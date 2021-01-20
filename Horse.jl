@@ -45,7 +45,7 @@ module Horse
                         x = x'
                         t = t'
                     end
-                    x2 = zeros(size(x)[1],1)
+                    x2 = ones(size(x)[1],1)
                     x = hcat(x2, x)
                     w = inv(x' * x) * x' * t
                     return w
@@ -55,9 +55,9 @@ In that case, use ridge regression.")
                 end
             end
             function predict(x, w)
-                x2 = zeros(size(x)[1],1)
-                x = hcat(x2, x)
-                return x * w
+                x2 = ones(size(x)[1],1)
+                x = vcat(x2, x)
+                return w' * x
             end
         end
         module RR()#this is Ridge Regression
@@ -68,16 +68,16 @@ In that case, use ridge regression.")
                     x = x'
                     t = t'
                 end
-                x2 = zeros(size(x)[1], 1)
+                x2 = ones(size(x)[1], 1)
                 x = hcat(x2, x)
                 i = Matrix{Float64}(I, size(x)[2], size(x)[2])
                 w = inv(x' * x + alpha * i) * x' * t
                 return w
             end
             function predict(x, w)
-                x2 = zeros(size(x)[1], 1)
-                x = hcat(x2 * x)
-                return x * w
+                x2 = ones(1, size(x)[2])
+                x = vcat(x2, x)
+                return w' * x
             end
         end
         module LR()#this is Lasso Regression
@@ -88,7 +88,7 @@ In that case, use ridge regression.")
             function fit(x, t; alpha = 0.1, tol = 0.0001, mi = 1000000)
                 function update(n, d, x, t, w, alpha)
                     l = length(w)
-                    w[1] = sum(t - x * w[2:l]) / n#this line has problem
+                    w[1] = sum(t - x * w[2:l]) / n
                     wvec = ones(n) * w[1]
                     for k = 1:d
                         ww = w[2:l]
@@ -114,6 +114,11 @@ In that case, use ridge regression.")
                     end
                 end
             end
+            function predict(x, w)
+                x2 = ones(1, size(x)[2])
+                x = vcat(x2, x)
+                return w' * x
+            end
         end
     end
 
@@ -124,7 +129,13 @@ In that case, use ridge regression.")
         if length(x) != length(t)
             throw("The sizes of the arguments x and t you passed do not match.")
         end
-        y = w[1] * x .+ w[2]
+        if length(size(x)) < 2
+            y = w[1] * x .+ w[2]
+        else
+            x2 = ones(1, size(x)[2])
+            x = vcat(x2, x)
+            y = w' * x
+        end
         mse = sum((y - t) .^ 2) / length(y) #mse is Mean Square error
         return mse
         end
