@@ -20,5 +20,6 @@ using Test
     p = Linear_Regression.LR.predict(x, w)
     println(typeof(p))
     println(p)
+
     # Write your tests here.
 end
