@@ -1,7 +1,7 @@
-using Horse
+using LearningHorse
 using Test
 
-@testset "Horse.jl" begin
+@testset "LearningHorse.jl" begin
     mean = Loss_Function.MSE([1,2,3,4], [1,2,3,4], [1,2])
     @test mean == 4
     x = [15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76]

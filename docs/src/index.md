@@ -1,13 +1,13 @@
-# Horse Manual
+# LearningHorse Manual
 
-Horse provides an easy-to-use machine learning library 
+LearningHorse provides an easy-to-use machine learning library 
 
 ## Installation
 
-Horse can be installed using the Julia package manager. From the Julia REPL, type ] to enter the Pkg REPL mode and run
+LearningHorse can be installed using the Julia package manager. From the Julia REPL, type ] to enter the Pkg REPL mode and run
 However, it can't be installed by name.
 ```@example
-pkg > https://github.com/QGMW22/Horse/Horse.jl
+pkg > https://github.com/QGMW22/LearningHorse/Horse.jl
 ```
 
 ## How to use
@@ -16,7 +16,7 @@ pkg > https://github.com/QGMW22/Horse/Horse.jl
 Stochastic Gradient Descent(SGD) can be used as follows.
 
 ```@example
-using Horse
+using LearningHorse
 x = [15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.1 26.95 5.68 21.76]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.71 173.29 159.31 171.52 138.96 165.87]
 w = Linear_Regression.SGD.fit(x, t)
@@ -34,7 +34,7 @@ Prediction using the built model can be done with the following function. Howeve
 Multiple regression can be used as follows.
 
 ```@example
-using Horse
+using LearningHorse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
 w = Linear_Regression.MR.fit(x, t) #Here, because there is no inverse matrix, I get an error.
@@ -60,7 +60,7 @@ The return value is an Array type.
 Ridge regression can be used as follows.
 
 ```@example
-using Horse
+using LearningHorse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
 w = Linear_Regression.RR.fit(x, t)
@@ -80,7 +80,7 @@ The return value is an Array type.
 Lasso regression can be used as follows.
 
 ```@example
-using Horse
+using LearningHorse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
 w = Linear_Regression.LR.fit(x, t)
@@ -100,7 +100,7 @@ The return value is of type LinearAlgebra.Adjoint.
 Mean Square Error can be used as follows.
 
 ```@example
-using Horse
+using LearningHorse
 mean = Loss_Function.MSE([1, 2, 3, 4], [1, 2, 3, 4], [1, 2])
 println(mean) #4
 ```

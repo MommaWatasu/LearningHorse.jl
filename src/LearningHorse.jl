@@ -1,5 +1,5 @@
 using LinearAlgebra
-module Horse
+module LearningHorse
 
     export Linear_Regression
     module Linear_Regression
