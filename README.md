@@ -1,5 +1,6 @@
 # LearningHorse
-<<<<<<< HEAD
+
+![logo](https://user-images.githubusercontent.com/76277264/105711246-a16efc00-5f5b-11eb-9e1e-e93955250bd8.png)
 
 [![Build Status](https://travis-ci.com/QGMW22/LearningHorse.jl.svg?branch=master)](https://travis-ci.com/QGMW22/LearningHorse.jl)
 [![Coverage](https://codecov.io/gh/QGMW22/LearningHorse.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QGMW22/LearningHorse.jl)
