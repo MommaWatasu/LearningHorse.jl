@@ -3,9 +3,10 @@
 LearningHorseは使いやすく、高速な機械学習ライブラリを提供します。現時点では、回帰による学習に限られていますが、これから徐々に拡張していきます。
 
 ## インストール
-LearningHorseは今のところ名前でインストールする事はできません、次のようにする必要があります。
+LearningHorseはJuliaパッケージマネージャーを使用してインストールできます。
+JuliaREPlから"["と入力して、PkgREPLモードに入り実行します。
 ```@example
-pkg > add https://github.com/QGMW22/Horse/Horse.jl
+pkg > add LearningHorse
 ```
 
 ## 使い方

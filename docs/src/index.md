@@ -5,9 +5,8 @@ LearningHorse provides an easy-to-use machine learning library
 ## Installation
 
 LearningHorse can be installed using the Julia package manager. From the Julia REPL, type ] to enter the Pkg REPL mode and run
-However, it can't be installed by name.
 ```@example
-pkg > https://github.com/QGMW22/LearningHorse/Horse.jl
+pkg > add LearningHorse
 ```
 
 ## How to use
