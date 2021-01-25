@@ -12,7 +12,7 @@ but we will continue to develop them.
 
 ## Resources
 - Documentation:https://ik1-414-39231.vs.sakura.ne.jp/learninghorse/
-- Souce code:https://github.com/QGMW22/Learning.jl
+- Souce code:https://github.com/QGMW22/Learninghorse.jl
 
 ## Installation
 LearningHorse can be installed using the Julia package manager.
