@@ -16,7 +16,7 @@ but we will continue to develop them.
 
 ## Installation
 LearningHorse can be installed using the Julia package manager.
-From the Julia REPL, type ] to enter the Pkg REPL mode and run However, it can't be installed by name.
+From the Julia REPL, type ] to enter the Pkg REPL mode and run.
 ```@example
 pkg > add LearningHorse
 ```
