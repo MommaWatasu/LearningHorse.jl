@@ -4,7 +4,7 @@ module LearningHorse
     export Linear_Regression
     module Linear_Regression
         module SGD() #this is Slope Gradient Descent
-            function fit(x, t, alpha = 0.001, tau_max = 100000, eps = 0.1)
+            function fit(x, t; alpha = 0.001, tau_max = 100000, eps = 0.1)
                 function DMSE(x,t,w)
                     if length(x) != length(t)
                         throw("The sizes of the arguments x and t you passed do not match.")
@@ -122,10 +122,38 @@ In that case, use ridge regression.")
         end
     end
 
+    export Classification
+    module Classification #this is Classification
+        module SGD #This uses SGD for classification
+            function fit(x, t, c; alpha = 0.001, tau_max = 100000, eps = 0.1)
+                function softmax(a)
+                    if ndims(a) == 1
+                        return exp.(a) / sum(exp.(a))
+                    else
+                        s = sum(exp.(a), dims = 1)
+                        for i in 2 : size(a)[1]
+                            s = vcat(s, s)
+                        end
+                        return exp.(a) / s
+                function CEL(w, x, t) #this is Cross entropy Loss
+                    p = softmax(x * w)
+                    grad = -(x' * (y - p))
+                    return grad / length(x)
+                end
+                w = ones(length(x[0]) + 1, c)
+                x = hcat(ones(len(x), 1), x)
+                for tau in 1 : tau_max
+                    grad = self.CEL(w, x, t)
+                    w -= alpha * grad
+                end
+            end
+        end
+    end
+
     export Loss_Function
-    module Loss_Function # this is Mean Square Error
+    module Loss_Function #Loss Fuunctions 
         export MSE
-        function MSE(x, t, w)
+        function MSE(x, t, w) # this is Mean Square Error
         if length(x) != length(t)
             throw("The sizes of the arguments x and t you passed do not match.")
         end
@@ -140,7 +168,5 @@ In that case, use ridge regression.")
         return mse
         end
     end
-
-# Write your package code here.
 
 end
