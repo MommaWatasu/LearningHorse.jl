@@ -135,6 +135,8 @@ In that case, use ridge regression.")
                             s = vcat(s, s)
                         end
                         return exp.(a) / s
+                    end
+                end
                 function CEL(w, x, t) #this is Cross entropy Loss
                     p = softmax(x * w)
                     grad = -(x' * (y - p))
