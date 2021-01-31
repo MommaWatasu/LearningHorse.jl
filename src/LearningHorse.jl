@@ -55,7 +55,7 @@ In that case, use ridge regression.")
                 end
             end
             function predict(x, w)
-                x2 = ones(size(x)[1],1)
+                x2 = ones(1, size(x)[2])
                 x = vcat(x2, x)
                 return w' * x
             end
@@ -124,37 +124,81 @@ In that case, use ridge regression.")
 
     export Classification
     module Classification #this is Classification
-        module SGD #This uses SGD for classification
-            function fit(x, t, c; alpha = 0.001, tau_max = 100000, eps = 0.1)
-                function softmax(a)
-                    if ndims(a) == 1
-                        return exp.(a) / sum(exp.(a))
-                    else
-                        s = sum(exp.(a), dims = 1)
-                        for i in 2 : size(a)[1]
-                            s = vcat(s, s)
+        function LE(t)#this is Label Encoder
+            n = 1
+            l = length(t)
+            for i in 1 : l
+                if typeof(t[i]) == String
+                    for ii in i : l
+                        if t[i] == t[ii]
+                            t[ii] = n
                         end
-                        return exp.(a) / s
                     end
                 end
-                function CEL(w, x, t) #this is Cross entropy Loss
+                n += 1
+            end
+        end
+        function CTOH(ts) #This is Convert to one hot
+            try
+                ts = broadcast(Int, ts)
+            catch
+                throw("Perhaps the array of objective variables you passed has a non-zero decimal point in the name of the class (as in 1.1).Please change it to an integer type.")
+            end
+            if 0 in ts
+                ts .+= 1
+            end
+            c = maximum(ts)
+            oh = zeros(size(ts)[2], c)
+            i = 1
+            for t in ts
+                oh[i, t] = 1.0
+                i += 1
+            end
+            return oh
+        end
+        module SGD #This uses SGD for classification
+            function softmax(a)
+                if ndims(a) == 1
+                    grad =  exp.(a) ./ sum(exp.(a))
+                else
+                    grad =  exp.(a) ./ sum(exp.(a), dims = 1)
+                end
+                return grad
+            end
+            function fit(x, t, c; alpha = 0.001, tau_max = 100000)
+                function CEE(w, x, t) #this is Cross entropy Error
                     p = softmax(x * w)
-                    grad = -(x' * (y - p))
+                    grad = -(x' * (t - p))
                     return grad / length(x)
                 end
-                w = ones(length(x[0]) + 1, c)
-                x = hcat(ones(len(x), 1), x)
+                if size(x)[1] != size(t)[1]#Processing when the matrix is ​​organized by dependent variable
+                    x = x'
+                end
+                x = hcat(ones(size(x)[1], 1), x)
+                w = ones(size(x)[2], size(t)[2])
                 for tau in 1 : tau_max
-                    grad = self.CEL(w, x, t)
+                    grad = CEE(w, x, t)
+                    for i in 1:length(grad)
+                        if grad[i] === NaN
+                            grad[i] = 0
+                        end
+                    end
                     w -= alpha * grad
                 end
+                return w
+            end
+            #Pass so that the row is each data sample and the column is each feature.
+            function predict(x, w)
+                x2 = ones(size(x)[1], 1)
+                x = hcat(x2, x)
+                s = softmax(x * w)
+                p = [findfirst(s[i, :] .== maximum(s[i, :])) for i in 1:size(s)[1]]
             end
         end
     end
 
     export Loss_Function
     module Loss_Function #Loss Fuunctions 
-        export MSE
         function MSE(x, t, w) # this is Mean Square Error
         if length(x) != length(t)
             throw("The sizes of the arguments x and t you passed do not match.")
@@ -168,6 +212,19 @@ In that case, use ridge regression.")
         end
         mse = sum((y - t) .^ 2) / length(y) #mse is Mean Square error
         return mse
+        end
+        function CEE(w, x, t) #this is Cross entropy Error
+            function softmax(a)
+                if ndims(a) == 1
+                    grad =  exp.(a) ./ sum(exp.(a))
+                else
+                    grad =  exp.(a) ./ sum(exp.(a), dims = 1)
+                end
+                return grad
+            end
+            p = softmax(x * w)
+            grad = -(x' * (t - p))
+            return grad / length(x)
         end
     end
 
