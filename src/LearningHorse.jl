@@ -1,8 +1,8 @@
 using LinearAlgebra
 module LearningHorse
 
-    export Linear_Regression
-    module Linear_Regression
+    export LinearRegression
+    module LinearRegression
         module SGD() #this is Slope Gradient Descent
             function fit(x, t; alpha = 0.001, tau_max = 100000, eps = 0.1)
                 function DMSE(x,t,w)
@@ -126,17 +126,18 @@ In that case, use ridge regression.")
     module Classification #this is Classification
         function LE(t)#this is Label Encoder
             n = 1
-            l = length(t)
-            for i in 1 : l
-                if typeof(t[i]) == String
-                    for ii in i : l
-                        if t[i] == t[ii]
-                            t[ii] = n
-                        end
+            le = length(t)
+            target = ones(1, le)
+            s = [v for v in Set(t)]
+            for i in 1:le
+                for ii in 1:length(s)
+                    if t[i] == s[ii]
+                        target[i] = ii
+                        break
                     end
                 end
-                n += 1
             end
+            return target
         end
         function CTOH(ts) #This is Convert to one hot
             try
@@ -157,19 +158,19 @@ In that case, use ridge regression.")
             return oh
         end
         module SGD #This uses SGD for classification
+            using LinearAlgebra
             function softmax(a)
                 if ndims(a) == 1
-                    grad =  exp.(a) ./ sum(exp.(a))
+                    return exp.(a) ./ sum(exp.(a))
                 else
-                    grad =  exp.(a) ./ sum(exp.(a), dims = 1)
+                    return exp.(a) ./ sum(exp.(a), dims = 2)
                 end
-                return grad
             end
-            function fit(x, t, c; alpha = 0.001, tau_max = 100000)
-                function CEE(w, x, t) #this is Cross entropy Error
+            function fit(x, t; alpha = 0.01, tau_max = 1000)
+                function CEE(w, x, t, tau) #this is Cross entropy Error
                     p = softmax(x * w)
                     grad = -(x' * (t - p))
-                    return grad / length(x)
+                    return grad / length(x[:, 1])
                 end
                 if size(x)[1] != size(t)[1]#Processing when the matrix is ​​organized by dependent variable
                     x = x'
@@ -177,12 +178,7 @@ In that case, use ridge regression.")
                 x = hcat(ones(size(x)[1], 1), x)
                 w = ones(size(x)[2], size(t)[2])
                 for tau in 1 : tau_max
-                    grad = CEE(w, x, t)
-                    for i in 1:length(grad)
-                        if grad[i] === NaN
-                            grad[i] = 0
-                        end
-                    end
+                    grad = CEE(w, x, t, tau)
                     w -= alpha * grad
                 end
                 return w
@@ -197,8 +193,8 @@ In that case, use ridge regression.")
         end
     end
 
-    export Loss_Function
-    module Loss_Function #Loss Fuunctions 
+    export LossFunction
+    module LossFunction #Loss Fuunctions 
         function MSE(x, t, w) # this is Mean Square Error
         if length(x) != length(t)
             throw("The sizes of the arguments x and t you passed do not match.")
@@ -213,18 +209,29 @@ In that case, use ridge regression.")
         mse = sum((y - t) .^ 2) / length(y) #mse is Mean Square error
         return mse
         end
-        function CEE(w, x, t) #this is Cross entropy Error
+        function CEE(x, t, w; mean_f = false) #this is Cross entropy Error
             function softmax(a)
                 if ndims(a) == 1
                     grad =  exp.(a) ./ sum(exp.(a))
                 else
-                    grad =  exp.(a) ./ sum(exp.(a), dims = 1)
+                    grad =  exp.(a) ./ sum(exp.(a), dims = 2)
                 end
                 return grad
             end
+            function safe_log(x, miniv = 0.00000000001)
+                return map(log, clamp.(x, miniv, Inf))
+            end
+            
+            if size(x)[2] + 1 != size(w)[1]#Processing when the matrix is ​​organized by dependent variable
+                x = x'
+            end
+            x = hcat(ones(size(x)[1], 1), x)
             p = softmax(x * w)
-            grad = -(x' * (t - p))
-            return grad / length(x)
+            loss = -sum(t .* safe_log(p))
+            if mean_f
+                loss = loss / length(x[1, :])
+            end
+            return loss
         end
     end
 
