@@ -120,6 +120,53 @@ In that case, use ridge regression.")
                 return w' * x
             end
         end
+        module GBFM() #this use Gaussian basis function model for regression
+            using LinearAlgebra
+            function gauss(x, m, s)
+                return exp.(-(x .- m) .^ 2 ./ (2 * s ^ 2))
+            end
+            function fit(x, t, M; m = [], s = nothing, alpha = 0.0)
+                if m == []
+                    ma, mi = round.(Int, (maximum(x), minimum(x)))
+                    inter = (ma - mi) / (M - 1)
+                    for j in 1 : M
+                        push!(m, mi)
+                        mi += inter
+                    end
+                    println(m)
+                end
+                if s == nothing
+                    s = inter
+                end
+                if size(x)[1] != size(t)[1]#Processing when the matrix is ​​organized by dependent variable
+                    x = x'
+                    t = t'
+                end
+                i = Matrix{Float64}(I, size(x)[2], size(x)[2])
+                try
+                    phi = ones(size(x)[2], M + 1)
+                    for j in 1 : M
+                        phi[:, j] = gauss(x, m[j], s)
+                    end
+                    phit = phi'
+                    b = inv(phit * phi)
+                    c = b * phit
+                    w = c * t
+                    return w, m, s
+                catch
+                    println("Perhaps the matrix x you passed does not have an inverse matrix. In that case, you should add the 'alpha' to the arguments('alpha' is a regularization term)")
+                end
+            end
+            function predict(x, w, m, s)
+                w_len = length(w)
+                t = fill!(copy(x), 0)
+                for i in 1 : w_len - 1
+                    t += w[i] * gauss(x, m[i], s)
+                end
+                t .+= w[w_len]
+                return t
+            end
+        end
     end
 
     export Classification
@@ -157,7 +204,7 @@ In that case, use ridge regression.")
             end
             return oh
         end
-        module SGD #This uses SGD for classification
+        module MS #This is Multiclass softmax
             using LinearAlgebra
             function softmax(a)
                 if ndims(a) == 1
@@ -195,21 +242,37 @@ In that case, use ridge regression.")
 
     export LossFunction
     module LossFunction #Loss Fuunctions 
-        function MSE(x, t, w) # this is Mean Square Error
-        if length(x) != length(t)
-            throw("The sizes of the arguments x and t you passed do not match.")
+        function MSE(x, t, w; gauss = false, m = nothing, s = nothing, mean_f = true) # this is Mean Square Error
+            function gauss_func(x, m, s)
+                return exp.(-(x .- m) .^ 2 ./ (2 * s ^ 2))
+            end
+            if length(x) != length(t)
+                throw("The sizes of the arguments x and t you passed do not match.")
+            end
+            if gauss
+                w_len = length(w)
+                y = fill!(copy(x), 0)
+                for i in 1 : w_len - 1
+                    y += w[i] * gauss_func(x, m[i], s)
+                end
+                y .+= w[w_len]
+                if size(t)[1] != size(y)[1]
+                    y = y'
+                end
+            elseif length(size(x)) < 2
+                y = w[1] * x .+ w[2]
+            else
+                x2 = ones(1, size(x)[2])
+                x = vcat(x2, x)
+                y = w' * x
+            end
+            mse = sum((y - t) .^ 2)
+            if mean_f
+                mse /= length(y) #mse is Mean Square error
+            end
+            return mse
         end
-        if length(size(x)) < 2
-            y = w[1] * x .+ w[2]
-        else
-            x2 = ones(1, size(x)[2])
-            x = vcat(x2, x)
-            y = w' * x
-        end
-        mse = sum((y - t) .^ 2) / length(y) #mse is Mean Square error
-        return mse
-        end
-        function CEE(x, t, w; mean_f = false) #this is Cross entropy Error
+        function CEE(x, t, w; mean_f = true) #this is Cross entropy Error
             function softmax(a)
                 if ndims(a) == 1
                     grad =  exp.(a) ./ sum(exp.(a))
