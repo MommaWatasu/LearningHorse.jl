@@ -4,6 +4,17 @@ using Test
 @testset "LearningHorse.jl" begin
     mean = LossFunction.MSE([1,2,3,4], [1,2,3,4], [1,2])
     @test mean == 4
+    for (a, x) in zip(1:2, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [1 2 3 4 5; 2 3 4 5 6]])
+        sd = Preprocessing.SS.fit_transform(x, axis = a)
+        p = Preprocessing.SS.fit(x, axis = a)
+        @test Preprocessing.SS.transform(x, p, axis = a) == sd[1]
+        sd = Preprocessing.MM.fit_transform(x, axis = a)
+        p = Preprocessing.MM.fit(x, axis = a)
+        @test Preprocessing.MM.transform(x, p, axis = a) == sd[1]
+        sd = Preprocessing.RS.fit_transform(x, axis = a)
+        p = Preprocessing.RS.fit(x, axis = a)
+        @test Preprocessing.RS.transform(x, p, axis = a) == sd[1]
+    end
     x = [15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76]
     t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
     w =LinearRegression.SGD.fit(x, t)
