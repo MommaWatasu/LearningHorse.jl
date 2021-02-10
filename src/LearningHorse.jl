@@ -215,7 +215,7 @@ In that case, use ridge regression.")
                 end
             end
             function fit(x, t; alpha = 0.01, tau_max = 1000)
-                function CEE(w, x, t, tau) #this is Cross entropy Error
+                function CEE(w, x, t) #this is Cross entropy Error
                     p = softmax(x * w)
                     grad = -(x' * (t - p))
                     return grad / length(x[:, 1])
@@ -226,7 +226,7 @@ In that case, use ridge regression.")
                 x = hcat(ones(size(x)[1], 1), x)
                 w = ones(size(x)[2], size(t)[2])
                 for tau in 1 : tau_max
-                    grad = CEE(w, x, t, tau)
+                    grad = CEE(w, x, t)
                     w -= alpha * grad
                 end
                 return w
@@ -237,6 +237,48 @@ In that case, use ridge regression.")
                 x = hcat(x2, x)
                 s = softmax(x * w)
                 p = [findfirst(s[i, :] .== maximum(s[i, :])) for i in 1:size(s)[1]]
+            end
+        end
+        module OVR #this is One-vs-Rest
+            using LinearAlgebra
+            function sigmoid(a)
+                return 1.0 / (1 + exp(-a))
+            end
+            function fit(x, t; alpha = 0.01, tau_max = 1000)
+                function CEE(w, x, t)
+                    grad = zeros(size(w))
+                    for i in 1:length(t)
+                        ti = (t[i] > 0) ? 1 : 0
+                        h = sigmoid(dot(w, x[i, :]))
+                        grad += ((h - ti) * x[i, :])'
+                    end
+                    return grad / length(t)
+                end
+                c = size(t)[2]
+                w = []
+                x = hcat(ones(size(x)[1], 1), x)
+                for i in 1:c
+                    if size(x)[1] != size(t[:, i])[1]#Processing when the matrix is ​​organized by dependent variable
+                        x = x'
+                    end
+                    w0 = ones(1, length(x[1, :]))
+                    for j in 1:tau_max
+                        grad = CEE(w0, x, t[:, i])
+                        w0 -= alpha * grad
+                    end
+                    push!(w, w0)
+                end
+                return w
+            end
+            function predict(x, w)
+                x = hcat(ones(size(x)[1], 1), x)
+                p = []
+                for i in 1 : size(x)[1]
+                    tp =  [sigmoid(dot(w[j, :][1], x[i, :])) for j in 1:size(w)[1]]
+                    tp = argmax(tp)
+                    push!(p, tp)
+                end
+                return p
             end
         end
     end
@@ -270,6 +312,20 @@ In that case, use ridge regression.")
                     t = []
                     for i in 1:size(x)[2]
                         push!(t, (x[:, i] .- p[i][1]) / p[i][2])
+                    end
+                end
+                return t
+            end
+            function inverse_transform(x, p; axis = 1)
+                if axis == 2
+                    x = x'
+                end
+                if ndims(x) == 1
+                    t = (x * p[2]) .+ p[1]
+                else
+                    t = []
+                    for i in 1:size(x)[2]
+                        push!(t, (x[:, i][1] * p[i][2]) .+ p[i][1])
                     end
                 end
                 return t
@@ -316,6 +372,20 @@ In that case, use ridge regression.")
                     t = []
                     for i in 1:size(x)[2]
                         push!(t, (x[:, i] .- p[i][2]) / (p[i][1] - p[i][2]))
+                    end
+                end
+                return t
+            end
+            function inverse_transform(x, p; axis = 1)
+                if axis == 2
+                    x = x'
+                end
+                if ndims(x) == 1
+                    t = (x * (p[1] - p[2])) .+ p[2]
+                else
+                    t = []
+                    for i in 1:size(x)[2]
+                        push!(t, (x[:, i][1] * (p[i][1] - p[i][2])) .+ p[i][2])
                     end
                 end
                 return t
@@ -367,6 +437,20 @@ In that case, use ridge regression.")
                 end
                 return t
             end
+            function inverse_transform(x, p; axis = 1)
+                if axis == 2
+                    x = x'
+                end
+                if ndims(x) == 1
+                    t = (x * (p[3] - p[1])) .+ p[2]
+                else
+                    t = []
+                    for i in 1:size(x)[2]
+                        push!(t, (x[:, i][1] * (p[i][3] - p[i][1])) .+ p[i][2])
+                    end
+                end
+                return t
+            end
             function fit_transform(x; axis = 1)
                 if axis == 2
                     x = x'
@@ -387,6 +471,7 @@ In that case, use ridge regression.")
     end
     export LossFunction
     module LossFunction #Loss Fuunctions 
+        using LinearAlgebra
         function MSE(x, t, w; gauss = false, m = nothing, s = nothing, mean_f = true) # this is Mean Square Error
             function gauss_func(x, m, s)
                 return exp.(-(x .- m) .^ 2 ./ (2 * s ^ 2))
@@ -417,7 +502,7 @@ In that case, use ridge regression.")
             end
             return mse
         end
-        function CEE(x, t, w; mean_f = true) #this is Cross entropy Error
+        function CEE(x, t, w; mean_f = true, sigmoid_f = false, t_f = false) #this is Cross entropy Error
             function softmax(a)
                 if ndims(a) == 1
                     grad =  exp.(a) ./ sum(exp.(a))
@@ -425,6 +510,9 @@ In that case, use ridge regression.")
                     grad =  exp.(a) ./ sum(exp.(a), dims = 2)
                 end
                 return grad
+            end
+            function sigmoid(a)
+                return 1.0 / (1 + exp(-a))
             end
             function safe_log(x, miniv = 0.00000000001)
                 return map(log, clamp.(x, miniv, Inf))
@@ -434,8 +522,25 @@ In that case, use ridge regression.")
                 x = x'
             end
             x = hcat(ones(size(x)[1], 1), x)
-            p = softmax(x * w)
-            loss = -sum(t .* safe_log(p))
+            if sigmoid_f
+                p = []
+                for i in 1 : size(x)[1]
+                    tp = [sigmoid(dot(w[j, :][1], x[i, :])) for j in 1:size(w)[1]]
+                    tp = tp'
+                    if p == []
+                        p = tp
+                    else
+                        p = vcat(p, tp)
+                    end
+                end
+            else
+                p = softmax(x * w)
+            end
+            if t_f
+                loss = -sum(t .* safe_log(p) + (1 .- p) .* safe_log(1 .- p))
+            else
+                loss = -sum(t .* safe_log(p))
+            end
             if mean_f
                 loss = loss / length(x[1, :])
             end

@@ -6,12 +6,15 @@ using Test
     @test mean == 4
     for (a, x) in zip(1:2, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [1 2 3 4 5; 2 3 4 5 6]])
         sd = Preprocessing.SS.fit_transform(x, axis = a)
+        inv = Preprocessing.SS.inverse_transform(sd[1], sd[2], axis = a)
         p = Preprocessing.SS.fit(x, axis = a)
         @test Preprocessing.SS.transform(x, p, axis = a) == sd[1]
         sd = Preprocessing.MM.fit_transform(x, axis = a)
+        inv = Preprocessing.MM.inverse_transform(sd[1], sd[2], axis = a)
         p = Preprocessing.MM.fit(x, axis = a)
         @test Preprocessing.MM.transform(x, p, axis = a) == sd[1]
         sd = Preprocessing.RS.fit_transform(x, axis = a)
+        inv = Preprocessing.RS.inverse_transform(sd[1], sd[2], axis = a)
         p = Preprocessing.RS.fit(x, axis = a)
         @test Preprocessing.RS.transform(x, p, axis = a) == sd[1]
     end
@@ -50,8 +53,14 @@ using Test
     println(w)
     p = Classification.MS.predict(x, w)
     println(p)
-    cee = LossFunction.CEE(x, t, w)
+    cee = LossFunction.CEE(x, t, w, t_f = true)
     println(cee)
+    w = Classification.OVR.fit(x, t; alpha = 0.1)
+    println("w:", w)
+    p = Classification.OVR.predict(x, w)
+    println("predict:", p)
+    cee = LossFunction.CEE(x, t, w, sigmoid_f = true)
+    println("cee:", cee)
 
     # Write your tests here.
 end
