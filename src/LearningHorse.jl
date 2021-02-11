@@ -505,8 +505,6 @@ In that case, use ridge regression.")
                     end
                 elseif b == "polynomial"
                     for i in 1 : w_len - 1
-                        println("size", size(t), size(polynomial_func(x, i - 1)))
-                        println("w[i] * polynomial_func(x, i - 1)", w[i] * polynomial_func(x, i - 1))
                         t += (w[i] * polynomial_func(x, i - 1))'
                     end
                 end
