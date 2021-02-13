@@ -22,4 +22,4 @@ pkg > add LearningHorse
 ```
 
 ## Improvement
-Next, we plan to implement classification.
+Next, we plan to implement Ensemble method, etc.
