@@ -1,13 +1,14 @@
 using Documenter
 makedocs(;
-    sitename="LearningHorse"
+    sitename="LearningHorse",
     pages = [
         "Home" => "index.md",
         "Manual" => [
-            "Regression" => "Regression.md"
-            "Classification" => "Classification.md"
-            "Preprocessing" => "Preprocessing.md"
-            "LossFunction" => "LossFunction.md"
+            "Regression" => "Regression.md",
+            "Classification" => "Classification.md",
+            "Preprocessing" => "Preprocessing.md",
+            "LossFunction" => "LossFunction.md",
         ],
-        "日本語版マニュアル" => "japanese.md"
+        "日本語版マニュアル" => "Japanese.md"
+    ]
 )
