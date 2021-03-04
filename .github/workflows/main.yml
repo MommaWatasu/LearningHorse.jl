@@ -3,7 +3,7 @@ name: LearningHorseCI
 on: [push]
 
 jobs:
-  build1:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,7 +18,7 @@ jobs:
         - uses: julia-actions/julia-buildpkg@v1
         - uses: julia-actions/julia-runtest@v1
         shell: bash
-		
+
     steps:
       - name: send Codecov
         - run julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
