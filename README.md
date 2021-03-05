@@ -4,8 +4,8 @@
 
 [![Build Status](https://travis-ci.com/QGMW22/LearningHorse.jl.svg?branch=master)](https://travis-ci.com/QGMW22/LearningHorse.jl)
 [![Coverage](https://codecov.io/gh/QGMW22/LearningHorse.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QGMW22/LearningHorse.jl)
-[![Coverage](https://coveralls.io/repos/github/QGMW22/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/QGMW22/LearningHorse.jl?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/QGMW22/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/QGMW22/LearningHorse.jl?branch=master)
+[![LearningHorseCI](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml/badge.svg)](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml)
 =======
 LearningHorse is Julia's machine learning library.At the moment, the algorithms that can be used are limited and unstable,
 but we will continue to develop them.
