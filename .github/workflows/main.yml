@@ -16,7 +16,7 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-  Send Codecov:
+  Send:
     if: ${{ success() }}
     needs: Build
     runs-on: ubuntu-latest
