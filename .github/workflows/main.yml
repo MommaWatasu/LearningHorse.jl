@@ -19,6 +19,7 @@ jobs:
   Send Codecov:
     if: ${{ success() }}
     needs: Build
+    runs-on: ubuntu-latest
     name: Codecov
     steps:
       - uses: codecov/codecov-action@v1
