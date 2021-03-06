@@ -16,15 +16,15 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-  Send:
-    if: ${{ success() }}
-    needs: Build
-    runs-on: ubuntu-latest
-    name: Codecov
-    steps:
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+#  Send:
+#    if: ${{ success() }}
+#    needs: Build
+#    runs-on: ubuntu-latest
+#    name: Codecov
+#    steps:
+#      - uses: codecov/codecov-action@v1
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#      - uses: coverallsapp/github-action@v1.1.2
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
