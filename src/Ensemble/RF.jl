@@ -1,3 +1,4 @@
+using StatsBase
 function unique(x; count = false)
     s = [v for v in Set(x)]
     if count
@@ -18,7 +19,7 @@ function unique(x; count = false)
     end
     return s
 end
-function fit(x, t; alpha = 0.01)
+function DecisionTree(x, t; alpha = 0.01)
     function get_branching_shold(xs)
         u = unique(xs)
         return (u[2:length(u)] + u[1:length(u)-1]) / 2
@@ -128,7 +129,7 @@ function fit(x, t; alpha = 0.01)
     classes = unique(t)
     return grow(x, t, classes, Inf, alpha, 1), classes
 end
-function predict(xs, tree, classes)
+function tree_predict(xs, tree, classes)
     function predict_one(x, tree)
         while tree["feature_id"] != nothing
             tree = (x[tree["feature_id"]] < tree["threshold"]) ? tree["left"] : tree["right"]
@@ -136,11 +137,58 @@ function predict(xs, tree, classes)
         return argmax(tree["class_count"])
     end
     predicts = [predict_one(xs[i, :], tree) for i in 1:size(xs)[1]]
-    d = zeros(Int, size(classes))
+    return predicts
+end
+function bootstrap(x, t, n_trees)
+    n_features = size(x)[2]
+    n_features_forest = Int(floor(sqrt(n_features)))
+    bootstrapped_x = zeros((length(t), n_features_forest, n_trees))
+    bootstrapped_t = zeros(Int, n_trees, length(t))
+    using_feature = zeros(Int, n_trees, n_features_forest)
+    newaxis = [CartesianIndex()]
+    global bootstrapped_x
+    global bootstrapped_t
+    global using_feature
+    for i in 1 : n_trees
+        ind = rand(1:length(t), length(t))
+        col = sample(1 : n_features, n_features_forest, replace = false)
+        k = x[ind, col]
+        bootstrapped_x[:, :, i] = k[:, :, newaxis]
+        bootstrapped_t[i, :] = t[ind]
+        using_feature[i, :] = col
+    end
+    return bootstrapped_x, bootstrapped_t, using_feature
+end
+function fit(x, t; n_trees = 10, alpha = 0.01)
+    classes = unique(t)
+    forest = Array{Any}(undef, n_trees)
+    classes = Array{Any}(undef, n_trees)
+    bootstrapped_x, bootstrapped_t, using_feature = bootstrap(x, t, n_trees)
+    for i in 1:n_trees
+        forest[i], classes[i] = DecisionTree(bootstrapped_x[:, :, i], bootstrapped_t[i, :], alpha = alpha)
+    end
+    return forest, classes, using_feature
+end
+function predict(x, forest, classes, using_feature)
+    solution = []
+    for (tree, classes, feature) in zip(forest, classes, using_feature)
+        s = tree_predict(x[:, feature], tree, classes)
+        if solution == []
+            solution = s
+        else    
+            solution = hcat(solution, s)
+        end
+    end
+    predicts = []
+    for i in 1:length(solution[:, 1])
+        class, counts = unique(solution[i, :], count = true)
+        push!(predicts, class[argmax(counts)[2]])
+    end
+    d = zeros(Int, size(classes[1]))
     for i in 1 : length(d)
         d[i] = i
     end
-    d = Dict(zip(d, classes))
+    d = Dict(zip(d, classes[1]))
     for i in 1 : length(predicts)
         predicts[i] = d[predicts[i]]
     end

@@ -52,9 +52,12 @@ using Test
     t = [0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2]
     tree, classes = Tree.DT.fit(x, t)
     println(tree)
-    p, d = Tree.DT.predict(x, tree, classes)
+    p = Tree.DT.predict(x, tree, classes)
     println(p)
-    println(d)
+    #=forest, classes, using_feature = Ensemble.RF.fit(x, t)
+    println("learning ended")
+    p = Ensemble.RF.predict(x, forest, classes, using_feature)
+    println(p)=#
     label = ["Apple", "Apple", "Pear", "Pear", "Lemon", "Apple", "Pear", "Lemon"]
     l = Classification.LE(label)
     println(l)
