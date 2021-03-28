@@ -38,6 +38,13 @@ module LearningHorse
         end
         include("./Tree/MV.jl")
     end
+
+    export Ensemble
+    module Ensemble
+        module RF
+            include("./Ensemble/RF.jl")
+        end
+    end
     export Preprocessing
     module Preprocessing
         module SS() #this is Standard Scaler
