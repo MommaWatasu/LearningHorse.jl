@@ -36,6 +36,7 @@ module LearningHorse
         module DT #This is Decision Tree
             include("./Tree/DT.jl")
         end
+        include("./Tree/MV.jl")
     end
     export Preprocessing
     module Preprocessing

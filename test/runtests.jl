@@ -52,12 +52,13 @@ using Test
     t = [0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2]
     tree, classes = Tree.DT.fit(x, t)
     println(tree)
+    Tree.MV("./sample.dot", tree, rounded=true, nc="#00FF00")
     p = Tree.DT.predict(x, tree, classes)
     println(p)
-    #=forest, classes, using_feature = Ensemble.RF.fit(x, t)
+    forest, classes, using_feature = Ensemble.RF.fit(x, t)
     println("learning ended")
     p = Ensemble.RF.predict(x, forest, classes, using_feature)
-    println(p)=#
+    println(p)
     label = ["Apple", "Apple", "Pear", "Pear", "Lemon", "Apple", "Pear", "Lemon"]
     l = Classification.LE(label)
     println(l)
