@@ -1,0 +1,6 @@
+include("./utils.jl")
+inlucde("./Dims.jl")
+include("./activations.jl")
+include("./Layers/Network.jl")
+include("./Layers/Pooling.jl")
+include("./Layers/Conv.jl")
