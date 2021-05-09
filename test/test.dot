@@ -1,0 +1,62 @@
+digraph Tree_model{
+graph[
+label = "Tree",
+bgcolor = "#ffffff",
+fontcolor = "#000000",
+fontsize = "18",
+style = "filled",
+margin = 0.2
+];
+node[
+shape = box,
+fillcolor = "#ffffff"
+];
+node1 [
+label = "X[1]<6.85
+samples=150
+value=[50, 50, 50]"
+];
+node2 [
+label = "X[1]<5.5
+samples=133
+value=[35, 48, 50]"
+];
+node3 [
+label = "X[2]<3.05
+samples=52
+value=[1, 6, 45]"
+];
+node4 [
+label = "samples=15
+value=[1, 6, 8]"
+];
+node5 [
+label = "samples=37
+value=[0, 0, 37]"
+];
+node6 [
+label = "samples=81
+value=[34, 42, 5]"
+];
+node7 [
+label = "X[1]<7.550000000000001
+samples=17
+value=[15, 2, 0]"
+];
+node8 [
+label = "samples=11
+value=[9, 2, 0]"
+];
+node9 [
+label = "samples=6
+value=[6, 0, 0]"
+];
+node1->node2[label = "True"];
+node2->node3;
+node3->node4;
+node3->node5;
+node2->node6;
+node1->node7[label = "False"];
+node7->node8;
+node7->node9;
+}

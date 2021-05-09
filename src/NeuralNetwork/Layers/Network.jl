@@ -71,7 +71,11 @@ end
 
 function (layer::Dense)(Δ, z, back::Bool)
     w, σ = layer.w, layer.activation
-    Δ*w*σ(z, back = true)
+    Σ = zeros(size(w)[2])
+    for i in 1 : length(Σ)
+        Σ[i] += w[:, i] ⋅ Δ
+    end
+    Σ.*σ.(z, true)
 end
 
 struct Flatten <: NParam end

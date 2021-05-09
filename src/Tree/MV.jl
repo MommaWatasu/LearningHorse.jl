@@ -1,4 +1,4 @@
-function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label = "Tree", fs = "18", nc="#ffffff")
+function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label = "Tree", fs = "18", nc="#ffffff") # Model Visualization
     if path[length(path) - 3 : length(path)] != ".dot"
         throw("The file path you passed is not prefixed with'dot'.")
     end
@@ -28,7 +28,7 @@ function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label
                 println(file, name*" [")
                 st = ""
                 if v["left"] != nothing
-                    st = "X["*string(v["feature_id"])*"]<"*string(v["threshold"])
+                    st = "X["*string(v["feature_id"])*"]<"*string(v["threshold"])*"\n"
                 end
                 samples = sum(v["class_count"])
                 st *= "samples="*string(samples)*"\n"

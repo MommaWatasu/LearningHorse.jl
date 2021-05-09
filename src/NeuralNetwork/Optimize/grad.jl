@@ -3,18 +3,24 @@ struct Grads
     ps::Dict
 end
 
+function Base.getindex(G::Grads, t::T) where T <:AbstractArray
+    return G.g[t]
+end
+
 c_t(x::Tuple) = x
 c_t(x) = Tuple(x)
 
 function grad(m, d, loss, ps)
-    recode = m(d, rf = true)
-    grads = copy(ps.ps)
+    layers = m.net
+    recode = m(d[1], rf = true)
+    grads = Dict()
     Δ = fill!(similar(recode[end]), loss)
-    for i in length(N.net) : 1
+    for i in length(m.net) : -1 : 1
         z = recode[i]
-        grads[i] = (z*Δ, Δ)
-        i == 1 || continue
-        Δ = layers[i](x, z, back = true)
+        grads[ps.ps[i*2-1]] = Δ * z'
+        grads[ps.ps[i*2]] = Δ
+        i == 1 && continue
+        Δ = layers[i](Δ, z, true)
     end
     Grads(grads, ps.ps)
 end

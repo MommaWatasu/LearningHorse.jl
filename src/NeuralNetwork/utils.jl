@@ -35,12 +35,20 @@ struct Params
         ps = Dict()
         layers = model.net
         for i in 1 : length(layers)
-            if layers[i] <: Param
-                weight, bias = layers[i].weight, layers[i].bias
+            if typeof(layers[i]) <: Param
+                weight, bias = layers[i].w, layers[i].b
                 l = length(ps)
-                ps[l+1] = (weight, bias)
+                ps[l+1], ps[l+2] = weight, bias
             end
         end
         new(ps)
+    end
+end
+
+function Base.iterate(P::Params, state = 1)
+    if state > length(P.ps)
+        return nothing
+    else
+        (P.ps[state], state + 1)
     end
 end

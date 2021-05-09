@@ -1,3 +1,5 @@
+export line, sigmoid, hardsigmoid, relu, elu, selu, tanh, hardtanh, softsign, softplus
+
 function line(x)
     return x
 end
