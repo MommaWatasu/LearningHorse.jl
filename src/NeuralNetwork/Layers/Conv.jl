@@ -1,4 +1,4 @@
-struct Conv{F, W, B, N, M} <: Param
+struct Conv{F, W, B, N, M} <: Layer
     σ::F
     w::W
     b::B

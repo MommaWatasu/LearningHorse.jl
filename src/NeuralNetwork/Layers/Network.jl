@@ -1,8 +1,6 @@
 using Random
 abstract type Layer end
-# Param is the type which has field 'weight' and 'bias'
-abstract type Param  <: Layer end
-# NParam is the type which has field 'weight' and 'bias'
+#This type isn't Optimized.
 abstract type NParam <: Layer end
 
 include("../utils.jl")
@@ -25,12 +23,11 @@ function (N::NetWork)(x; rf=false)
         end
         return x
     else
-        recode = []
+        recode = Dict()
         layers = N.net
-        push!(recode, x)
+        recode[1] = (nothing, x)
         for i in 1 : length(layers)
-            x = layers[i](x)
-            push!(recode, x)
+            x = layers[i](x, recode, i)
         end
         return recode
     end
@@ -48,14 +45,15 @@ function Base.show(io::IO, N::NetWork)
     end
 end
 
-struct Dense{F} <: Param
-    w::T where T <: AbstractArray
-    b::T where T <: AbstractArray
+struct Dense{F} <: Layer
+    w::AbstractArray
+    b::AbstractArray
+    recode::AbstractArray
     activation::F
 end
 
 function Dense(io::Pair{<:Integer, <:Integer}, activation; set_w = "Xavier", set_b = zeros)
-    return Dense(dense_w(io..., set_w), set_b(io[2]), activation)
+    return Dense(dense_w(io..., set_w), set_b(io[2]), [], activation)
 end
 
 function Base.show(io::IO, D::Dense)
@@ -64,9 +62,17 @@ function Base.show(io::IO, D::Dense)
     print("Dense(IO:$i => $o, σ:$σ)")
 end
 
-function (layer::Dense)(x::T) where T<:AbstractArray
+function (layer::Dense)(x::AbstractArray)
     w, b, σ = layer.w, layer.b, layer.activation
     σ.(w * x + b)
+end
+
+function (layer::Dense)(x::AbstractArray, recode::Dict, i)
+    w, b, σ = layer.w, layer.b, layer.activation
+    z = w * x
+    a = σ.(z + b)
+    recode[i+1] = (z, a)
+    a
 end
 
 function (layer::Dense)(Δ, z, back::Bool)
@@ -78,15 +84,29 @@ function (layer::Dense)(Δ, z, back::Bool)
     Σ.*σ.(z, true)
 end
 
-struct Flatten <: NParam end
+mutable struct Flatten <: NParam
+    csize::Tuple
+    function Flatten()
+        return new(())
+    end
+end
 
 function (F::Flatten)(x)
+    F.csize = size(x)
     return reshape(x, length(x))
 end
 
-mutable struct Dropout <: NParam
+function (F::Flatten)(x, recode::Dict, i)
+    F.csize = size(x)
+    a = reshape(x, length(x))
+    recode[i] = (nothing, a)
+    return a
+end
+
+(F::Flatten)(Δ, z, back::Bool) = reshape(Δ, F.csize...)
+
+struct Dropout <: NParam
     p::Float64
-    active::Bool
 end
 
 function Base.show(io::IO, D::Dropout)
@@ -95,18 +115,21 @@ function Base.show(io::IO, D::Dropout)
     print(")")
 end
 
-function Dropout(p; active = false)
-    return Dropout(p, active)
-end
-
 dropout_kernel(y::T, p, q) where {T} = (y > p) ? float(1 / q) : float(0)
 
 function (D::Dropout)(x)
-    D.active || return x
     y = rand!(similar(x))
     y = dropout_kernel.(y, D.p, 1 - D.p)
-    return x .* y
+    x .* y
 end
+
+function (D::Dropout)(x::AbstractArray, recode::Dict, i)
+    a = D(x)
+    recode[i+1] = (nothing, a)
+    a
+end
+
+(D::Dropout)(Δ, z, back::Bool) = Δ
 
 function add_layer!(model::NetWork, obj::T) where T<: Layer
     l = length(model.net)

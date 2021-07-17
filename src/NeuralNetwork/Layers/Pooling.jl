@@ -1,7 +1,8 @@
-struct MaxPool{N, M} <: NParam
+mutable struct MaxPool{N, M} <: NParam
     k::NTuple{N, Int}
     stride::NTuple{N, Int}
     padding::NTuple{M, Int}
+    recode::Array
 end
 
 function MaxPool(k::NTuple{N, Int}; stride = k, padding = 0) where N
@@ -10,7 +11,7 @@ function MaxPool(k::NTuple{N, Int}; stride = k, padding = 0) where N
     end
     stride = convert(2, stride)
     padding = convert(4, padding)
-    return MaxPool(k, stride, padding)
+    return new(k, stride, padding)
 end
 
 function Base.show(io::IO, MP::MaxPool)
@@ -22,5 +23,22 @@ function (mp::MaxPool)(x::Array{T, N}) where {T, N}
         x = x[:, :, :, :]
     end
     IC = Im2Col(x, mp.k, mp.stride, mp.padding, trans = "Pool")
-    return reshape(maximum(IC.x, dims = 2), IC.Oh, IC.Ow, IC.b, IC.c)
+    m = reshape(maximum(IC.x, dims = 2), IC.Oh, IC.Ow, IC.b, IC.c)
+    mp.recode = map(x -> (x == 0) ? 0 : 1, m)
+    return m
+end
+
+function (mp::MaxPool)(x::Array, recode::Dict, i)
+    if N != 4
+        x = x[:, :, :, :]
+    end
+    IC = Im2Col(x, mp.k, mp.stride, mp.padding, trans = "Pool")
+    m = reshape(maximum(IC.x, dims = 2), IC.Oh, IC.Ow, IC.b, IC.c)
+    mp.recode = map(x -> (x == 0) ? 0 : 1, m)
+    recode[i] = (nothing, m)
+    return m
+end
+
+function (mp::MaxPool)(Δ, z, back::Bool)
+    
 end
