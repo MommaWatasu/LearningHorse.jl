@@ -3,7 +3,6 @@ abstract type Layer end
 #This type isn't Optimized.
 abstract type NParam <: Layer end
 
-include("../utils.jl")
 include("../activations.jl")
 include("./Pooling.jl")
 include("./Conv.jl")
