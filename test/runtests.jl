@@ -1,5 +1,5 @@
 using LearningHorse
-using LearningHorse.NeuralNetwork: NetWork, Dense, relu, tanh, Adam, add_layer!, train!
+using LearningHorse.NeuralNetwork: NetWork, Dense, relu, tanh, Adam, add_layer!, train!, mse
 using Test
 
 @testset "LearningHorse.jl" begin

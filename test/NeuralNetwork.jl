@@ -7,7 +7,7 @@
         for i in 1 : 10
             push!(data, (rand(Float64, 10), rand(Float64, 1)))
         end
-        loss(x, y) = sum((y .- x).^2)
+        loss = mse
         opt = Adam()
         train!(NN, loss, data, opt)
     end
