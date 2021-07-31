@@ -2,6 +2,8 @@ using Random
 abstract type Layer end
 #This type isn't Optimized.
 abstract type NParam <: Layer end
+#This type is Optimized.
+abstract type Param <: Layer end
 
 include("../activations.jl")
 include("./Pooling.jl")
@@ -22,13 +24,13 @@ function (N::NetWork)(x; rf=false)
         end
         return x
     else
-        recode = Dict()
+        record = Dict()
         layers = N.net
-        recode[1] = (nothing, x)
+        record[1] = (nothing, x)
         for i in 1 : length(layers)
-            x = layers[i](x, recode, i)
+            x = layers[i](x, record, i)
         end
-        return recode
+        return record
     end
 end
 
@@ -44,10 +46,10 @@ function Base.show(io::IO, N::NetWork)
     end
 end
 
-struct Dense{F} <: Layer
+struct Dense{F} <: Param
     w::AbstractArray
     b::AbstractArray
-    recode::AbstractArray
+    record::AbstractArray
     activation::F
 end
 
@@ -66,11 +68,11 @@ function (layer::Dense)(x::AbstractArray)
     σ.(w * x + b)
 end
 
-function (layer::Dense)(x::AbstractArray, recode::Dict, i)
+function (layer::Dense)(x::AbstractArray, record::Dict, i)
     w, b, σ = layer.w, layer.b, layer.activation
     z = w * x
     a = σ.(z + b)
-    recode[i+1] = (z, a)
+    record[i+1] = (z, a)
     a
 end
 
@@ -95,10 +97,10 @@ function (F::Flatten)(x)
     return reshape(x, length(x))
 end
 
-function (F::Flatten)(x, recode::Dict, i)
+function (F::Flatten)(x, record::Dict, i)
     F.csize = size(x)
     a = reshape(x, length(x))
-    recode[i] = (nothing, a)
+    record[i+1] = (a, a)
     return a
 end
 
@@ -122,9 +124,9 @@ function (D::Dropout)(x)
     x .* y
 end
 
-function (D::Dropout)(x::AbstractArray, recode::Dict, i)
+function (D::Dropout)(x::AbstractArray, record::Dict, i)
     a = D(x)
-    recode[i+1] = (nothing, a)
+    record[i+1] = (a, a)
     a
 end
 

@@ -29,22 +29,47 @@ struct Im2Col
             i += 2
             j += 1
         end
-        B, C, Xh, Xw = size(x)
+        Xh, Xw, C, B = size(x)
         Fh, Fw = k
         Sh, Sw = stride[1], stride[2]
-        Oh = Int(div((Xh - Fh), Sh + 1)) # ceil
-        Ow = Int(div((Xw - Fw), Sw + 1))
-        y = zeros(B, C, Fh, Fw, Oh, Ow)
+        Oh = Int(div((Xh - Fh), Sh) + 1) # ceil
+        Ow = Int(div((Xw - Fw), Sw) + 1)
+        y = zeros(Oh, Ow, Fh, Fw, C, B)
         for h in 1 : k[1]
             for w in 1 : k[2]
-                y[:, :, h, w, :, :] = x[:, :, h : Sh : h+Oh*Sh-1, w : Sw : w+Ow*Sw-1]
+                y[:, :, h, w, :, :] = x[h : Sh : h+Oh*Sh-1, w : Sw : w+Ow*Sw-1, :, :]
             end
         end
         y = permutedims(y, [1, 5, 6, 2, 3, 4])
         if trans == "Cov"
-            new(reshape(y, B*Oh*Ow, C*Fh*Fw), Oh, Ow, B, C)
+            new(reshape(y, C*Fh*Fw, B*Oh*Ow), Oh, Ow, B, C)
         else
             new(reshape(y, B*C*Oh*Ow, Fh*Fw), Oh, Ow, B, C)
         end
+    end
+end
+
+struct Col2Im
+    x::Array
+    function Col2Im(col, k, shape::IOShape, stride, padding)
+        Fh, Fw = k
+        Ih, Iw = shape.IShape
+        Oh, Ow = shape.OShape
+        B, C = Int(size(col)[2]/(Oh*Ow)), Int(size(col)[1]/(Fh*Fw))
+        gis(f, o, stride, pad) = stride * (Oh - 1) + Fh - pad
+        Ih, Iw = gis(Fh, Oh, stride[1], sum(padding[1:2])), gis(Fw, Ow, stride[2], sum(padding[3:4]))
+        padding = ceil.(padding)
+        padding = [sum(padding[1:2]), sum(padding[3:4])]
+        col = permutedims(reshape(col, C, Fh, Fw, B, Oh, Ow), [4, 1, 2, 3, 5, 6])
+        images = zeros(B, C, Ih+padding[1]+stride[1]-1, Iw+padding[2]+stride[2]-1)
+        for h in 1 : Oh
+            h_lim = h + stride[1] * Oh-1
+            for w in 1 : Ow
+                w_lim = w + stride[2] * Ow-1
+                images[:, :, h:stride[1]:h_lim, w:stride[2]:w_lim] += col[:, :, h, w, :, :]
+            end
+        end
+        padding .+= 1
+        new(images[:, :, padding[1]:Ih+padding[1]-1, padding[2]:Iw+padding[2]-1])
     end
 end

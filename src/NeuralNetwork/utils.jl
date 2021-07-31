@@ -29,6 +29,19 @@ function convert(N, i::String)
     return i
 end
 
+mutable struct IOShape
+    IShape::Tuple
+    OShape::Tuple
+    function IOShape()
+        new(tuple(), tuple())
+    end
+end
+
+function (IOS::IOShape)(Ih, Iw, Oh, Ow)
+    IOS.IShape = (Ih, Iw)
+    IOS.OShape = (Oh, Ow)
+end
+
 struct Params
     ps::Dict
     l::Int
@@ -36,13 +49,14 @@ struct Params
         ps = Dict()
         layers = model.net
         for i in 1 : length(layers)
-            if !(typeof(layers[i]) <: NParam)
-                weight, bias = layers[i].w, layers[i].b
-                l = length(ps)
-                ps[l+1], ps[l+2] = weight, bias
+            l = length(ps)
+            if typeof(layers[i]) <: Param
+                ps[l+1], ps[l+2] = layers[i].w, layers[i].b
+            else
+                ps[l+1], ps[l+2] = nothing, nothing
             end
         end
-        new(ps, length(layers) * 2)
+        new(ps, length(ps))
     end
 end
 
