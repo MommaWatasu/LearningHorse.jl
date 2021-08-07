@@ -3,7 +3,7 @@
 ### How to use SGD
 Stochastic Gradient Descent(SGD) can be used as follows.
 
-```@example
+```
 using Horse
 x = [15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.1 26.95 5.68 21.76]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.71 173.29 159.31 171.52 138.96 165.87]
@@ -29,7 +29,7 @@ Prediction using the built model can be done with the following function. Howeve
 ### How to use multiple regression
 Multiple regression can be used as follows.
 
-```@example
+```
 using Horse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
@@ -38,7 +38,7 @@ println(w)
 ```
 
 In multiple regression, if the inverse matrix cannot be generated in the program, the following error is returned.
-```@example
+```
 Perhaps the matrix x you passed does not have an inverse matrix. In that case, use ridge regression.
 ```
 
@@ -59,7 +59,7 @@ The return value is an Array type.
 ### How to use Ridge Regression
 Ridge regression can be used as follows.
 
-```@example
+```
 using Horse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
@@ -85,7 +85,7 @@ The return value is an Array type.
 ### How to use Lasso Regression
 Lasso regression can be used as follows.
 
-```@example
+```
 using Horse
 x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]
@@ -113,7 +113,7 @@ The return value is of type LinearAlgebra.Adjoint.
 ### How to use basis function model
 The basis function model can be used as follows.
 
-```@example
+```
 using LearningHorse
  x =[15.43 23.01 5.0 12.56 8.67 7.31 9.66 13.64 14.92 18.47 15.48 22.13 10.11 26.95 5.68 21.76; 70.43 58.15 37.22 56.51 57.32 40.84 57.79 56.94 63.03 65.69 62.33 64.95 57.73 66.89 46.68 61.08]
 t = [170.91 160.68 129.0 159.7 155.46 140.56 153.65 159.43 164.7 169.65 160.71 173.29 159.31 171.52 138.96 165.87]

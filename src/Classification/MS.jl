@@ -23,10 +23,15 @@ function fit(x, t; alpha = 0.01, tau_max = 1000)
     end
     return w
 end
+
+function forecast(x, w)
+    x = hcat(ones(size(x)[1], 1), x)
+    return softmax(x * w)
+end
+
 #Pass so that the row is each data sample and the column is each feature.
 function predict(x, w)
-    x2 = ones(size(x)[1], 1) 
-    x = hcat(x2, x)
+    x = hcat(ones(size(x)[1], 1), x)
     s = softmax(x * w)
     p = [findfirst(s[i, :] .== maximum(s[i, :])) for i in 1:size(s)[1]]
 end

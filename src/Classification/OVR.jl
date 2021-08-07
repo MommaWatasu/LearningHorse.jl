@@ -28,6 +28,18 @@ function fit(x, t; alpha = 0.01, tau_max = 1000)
     end
     return w
 end
+
+function forecast(x, w)
+    x = hcat(ones(size(x)[1], 1), x)
+    p = nothing
+    for i in 1 : size(x)[1]
+        tp = [sigmoid(dot(w[j, :][1], x[i, :])) for j in 1:size(w)[1]]
+        tp = tp'
+        (p == nothing) ? p = tp : p = vcat(p, tp)
+    end
+    return p
+end
+
 function predict(x, w)
     x = hcat(ones(size(x)[1], 1), x)
     p = []
