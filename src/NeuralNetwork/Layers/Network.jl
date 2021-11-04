@@ -27,9 +27,9 @@ Dense(IO:10=>5, σ:relu)
 ```
 """
 struct NetWork
-    net::Dict
+    net::Dict{Int, Layer}
     function NetWork()
-        new(Dict())
+        new(Dict{Int, Layer}())
     end
 end
 
@@ -44,16 +44,15 @@ function Base.getindex(N::NetWork, i::Int)
 end
 
 function (N::NetWork)(x; rf=false)
+    layers = N.net
     if !rf
-        layers = N.net
         for i in 1 : length(layers)
             x = layers[i](x)
         end
         return x
     else
-        record = Dict()
-        layers = N.net
-        record[1] = (nothing, x)
+        record = Array{Tuple}(undef, length(layers)+1)
+        record[1] = ([0.0], x)
         for i in 1 : length(layers)
             x = layers[i](x, record, i)
         end
@@ -77,7 +76,7 @@ end
     Dense(in=>out, σ; set_w = "Xavier", set_b = zeros)
 Crate a traditinal `Dense` layer, whose forward propagation is given by:
     y = σ.(W * x .+ b)
-The input of `x` should be a Vactor of length `in`, (Sorry for you couldn't learn using batch. I'll implement)
+The input of `x` should be a Vactor of length `in`, (Sorry for you can't learn using batch. I'll implement)
 
 # Example
 ```
@@ -88,44 +87,42 @@ julia> D(rand(Float64, 5)) |> size
 (2,)
 ```
 """
-struct Dense <: Param
-    w::AbstractArray
-    b::AbstractArray
-    activation
-    function Dense(io::Pair{<:Integer, <:Integer}, activation; set_w = "Xavier", set_b = zeros)
-        new(dense_w(io..., set_w), set_b(io[2]), activation)
-    end
+struct Dense{W, B, F} <: Param
+    w::W
+    b::B
+    σ::F
 end
+
+function Dense(io::Pair{<:Integer, <:Integer}, σ; set_w = "Xavier", set_b = zeros)
+    w, b = dense_w(io..., set_w), set_b(io[2])
+    Dense(w, b, σ)
+end
+
+trainable(D::Dense) = D.w, D.b
 
 function Base.show(io::IO, D::Dense)
     o, i = size(D.w)
-    σ = D.activation
+    σ = D.σ
     print("Dense(IO:$i => $o, σ:$σ)")
 end
 
-function (layer::Dense)(x::AbstractArray)
-    w, b, σ = layer.w, layer.b, layer.activation
-    σ.(w * x .+ b)
+function (D::Dense)(x::AbstractVecOrMat)
+    w, b, σ = D.w, D.b, D.σ
+    σ.(w*x.+b)
 end
 
-function (layer::Dense)(x::AbstractArray, record::Dict, i)
-    w, b, σ = layer.w, layer.b, layer.activation
-    z = w * x
-    a = σ.(z .+ b)
+function (D::Dense)(x::Array, record::Array, i::Int)
+    w, b, σ = D.w, D.b, D.σ
+    z::Array = w * x
+    a::Array = σ.(z .+ b)
     record[i+1] = (z, a)
     a
 end
 
-function (layer::Dense)(Δ, z, back::Bool)
+function (D::Dense)(Δ::Array, z::Array, back::Bool)
     #TODO:Corresponds to a batch of x.
-    w, σ = layer.w, layer.activation
-    Σ = zeros(size(w)[2])
-    for i in 1 : length(Σ)
-        Σ[i] += w[:, i] ⋅ Δ
-    end
-    println("Σ:", size(Σ))
-    println("z:", size(z))
-    Σ.*σ.(z, true)
+    w, σ = D.w, D.σ
+    w'*Δ.*σ.(z, true)
 end
 
 """
@@ -148,19 +145,21 @@ mutable struct Flatten <: NParam
     end
 end
 
-function (F::Flatten)(x)
+function (F::Flatten)(x::Array)
     F.csize = size(x)
     return reshape(x, length(x))
 end
 
-function (F::Flatten)(x, record::Dict, i)
+function (F::Flatten)(x::Array, record::Array, i)
     F.csize = size(x)
-    a = reshape(x, length(x))
+    a = reshape(x, :)
     record[i+1] = (a, a)
     return a
 end
 
-(F::Flatten)(Δ, z, back::Bool) = reshape(Δ, F.csize...)
+trainable(F::Flatten) = tuple()
+
+(F::Flatten)(Δ::Array, z::Array, back::Bool) = reshape(Δ, F.csize...)
 
 """
     Dropout(p)
@@ -193,21 +192,23 @@ function Base.show(io::IO, D::Dropout)
     print(")")
 end
 
-dropout_kernel(y::T, p, q) where {T} = (y > p) ? float(1 / q) : float(0)
+dropout_kernel(y::T, p::Float64, q::Float64) where {T} = (y > p) ? float(1 / q) : float(0)
 
-function (D::Dropout)(x)
+function (D::Dropout)(x::Array)
     y = rand!(similar(x))
     y = dropout_kernel.(y, D.p, 1 - D.p)
     x .* y
 end
 
-function (D::Dropout)(x::AbstractArray, record::Dict, i)
+function (D::Dropout)(x::AbstractArray, record::Array, i::Int)
     a = D(x)
     record[i+1] = (a, a)
     a
 end
 
-(D::Dropout)(Δ, z, back::Bool) = Δ
+(D::Dropout)(Δ::Array, z::Array, back::Bool) = Δ
+
+trainable(D::Dropout) = tuple()
 
 """
      add_layer!(model, layers...)
@@ -222,7 +223,7 @@ julia> N
 Layer1 : Dense(IO:10 => 5, σ:relu)
 Layer2 : Dense(IO:5 => 1, σ:relu)
 """
-function add_layer!(model::NetWork, obj::T) where T<: Layer
+function add_layer!(model::NetWork, obj::T) where T <: Layer
     l = length(model.net)
     model.net[l+1] = obj
 end
@@ -249,6 +250,7 @@ macro epochs(n, ex)
     for i in 1 : n
         progress = "progress:"*string(i)*"/"*string(n)*"\r"
         print(progress)
+        #@info "Epoch $i"
         eval(ex)
     end
 end

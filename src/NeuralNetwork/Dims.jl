@@ -56,10 +56,12 @@ struct Col2Im
         padding = [sum(padding[1:2]), sum(padding[3:4])]
         col = permutedims(reshape(col, C, Fh, Fw, B, Oh, Ow), [4, 1, 2, 3, 5, 6])
         images = zeros(B, C, Ih+padding[1]+stride[1]-1, Iw+padding[2]+stride[2]-1)
-        for h in 1 : Oh
+        for h in 1 : Fh
             h_lim = h + stride[1] * Oh-1
-            for w in 1 : Ow
+            for w in 1 : Fw
                 w_lim = w + stride[2] * Ow-1
+                #println("image : ", size(images[:, :, h:stride[1]:h_lim, w:stride[2]:w_lim]))
+                #println("col : ", size(col[:, :, h, w, :, :]))
                 images[:, :, h:stride[1]:h_lim, w:stride[2]:w_lim] += col[:, :, h, w, :, :]
             end
         end

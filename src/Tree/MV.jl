@@ -19,7 +19,8 @@ function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label
         println(file, "fillcolor = \""*nc*"\"\n];")
         i = 1
         edges = []
-        function tree_write(tree, i; return_i = false)
+        function tree_write(DT::DecisionTree, i; return_i = false)
+            tree = DT.tree
             s = []
             push!(s, (nothing, tree))
             while length(s) != 0
@@ -53,10 +54,10 @@ function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label
                 end
             end
         end
-        if typeof(forest) == Dict{String, Any}
+        if typeof(forest) == DecisionTree
            tree_write(forest, i)
         else
-            for tree in forest
+            for tree in forest.forest
                 i = tree_write(tree, i, return_i = true)
             end
         end

@@ -1,57 +1,47 @@
-using Statistics
-function fit(x; axis = 1) #this function dose only performs calculations.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [mean(x), std(x)]
-    else p = []
-        for i in 1:size(x)[2]
-            push!(p, [mean(x[:, i]), std(x[:, i])])
-        end
-    end
-    return p
+mutable struct Standard
+    p::AbstractVecOrMat
+    Standard() = new(Array{Float64}(undef, 0))
 end
-function transform(x, p; axis = 1) #Only transform is performed based on the calculation results of the'fit'function and'fit_transform'function.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        t = (x .- p[1]) / p[2]
-    else
-        t = [] 
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i] .- p[i][1]) / p[i][2])
-        end
-    end
-    return t
-end 
-function inverse_transform(x, p; axis = 1)
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1 
-        t = (x * p[2]) .+ p[1]
-    else
-        t = []
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i][1] * p[i][2]) .+ p[i][1])
-        end
-    end
-    return t
+
+function fit!(scaler::Standard, x; dims=1)
+    scaler.p = vcat(mean(x, dims=dims), std(x, dims=dims))
 end
-function fit_transform(x; axis = 1) #This function handles both the fit function and the transform function.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [mean(x), std(x)]
-        t = (x .- p[1]) / p[2]
-    else t, p = [], []
-        for i in 1:size(x)[2]
-            push!(p, [mean(x[:, i]), std(x[:, i])])
-            push!(t, (x[:, i] .- p[i][1]) / p[i][2])
+
+ss(x, m, s) = @. (x-m)/s
+
+function transform!(scaler::Standard, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = ss(x[:, i], p[:, i]...)
+        end
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = ss(x[i, :], p[:, i]...)
         end
     end
-    return t, p
+    return x
+end
+
+function fit_transform!(scaler::Standard, x; dims=1)
+    fit!(scaler, x, dims=dims)
+    transform!(scaler, x, dims=dims)
+end
+
+iss(x, m, s) = @. x*s+m
+
+function inv_transform!(scaler::Standard, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = iss(x[:, i], p[:, i]...)
+        end
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = iss(x[i, :], p[:, i]...)
+        end
+    end
+    return x
 end

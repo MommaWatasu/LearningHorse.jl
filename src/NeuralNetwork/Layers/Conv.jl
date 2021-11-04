@@ -20,7 +20,6 @@ julia> C(rand(10, 10, 2, 5)) |> size
     When you specidies `same` to `padding`, in some cases, it will be returned one size smaller.
     Because of its expression.
 ```
-
 julia> C = Conv((2, 2), 2=>2, relu, padding = "same")
 Convolution(k:(2, 2), IO:2 => 2, σ:relu
 
@@ -69,7 +68,7 @@ function (C::Conv)(x::AbstractArray)
     return x
 end
 
-function (C::Conv)(x::AbstractArray, record::Dict, i)
+function (C::Conv)(x::AbstractArray, record::Array, i)
     Ih, Iw = size(x)[1:2]
     IC = Im2Col(x, size(C.W)[1:2], C.stride, C.padding)
     C.shape(Ih, Iw, IC.Oh, IC.Ow)
@@ -92,8 +91,8 @@ function (C::Conv)(Δ, z, back::Bool)
     z = Im2Col(z, size(C.W)[1:2], C.stride, C.padding).x
     w, σ = C.w, C.σ
     Δ = w' * Δ .* σ.(z, true)
-    Fh, Fw,  = size(C.W)
     Δ = Col2Im(Δ, size(C.W)[1:2], C.shape, C.stride, C.padding).x
-    #I have to use Col2Im to Δ.
     return Δ
 end
+
+trainable(C::Conv) = C.w, C.b

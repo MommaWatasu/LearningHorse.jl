@@ -1,8 +1,4 @@
-using Random
-using CSV
-using DataFrames
-
-function dataloader(name; header = true, dir = "learningdatasets")
+function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
     hd = homedir()
     dir = joinpath(hd, dir)
     mkpath(dir)
@@ -12,13 +8,13 @@ function dataloader(name; header = true, dir = "learningdatasets")
             yn = Base.prompt("Can I download the mnist_train.csv(110MB)? (y/n)")
             yn == "y" && download("https://pjreddie.com/media/files/mnist_train.csv", "mnist_train.csv")
         end
-        df_tr = CSV.read("mnist_train.csv", header = false, DataFrame)
+        df_r = CSV.read("mnist_train.csv", header = false, DataFrame)
         if !(isfile("mnist_test.csv"))
             yn = Base.prompt("Can I download the mnist_test.csv(18MB)? (y/n)")
             yn == "y" && download("https://pjreddie.com/media/files/mnist_test.csv", "mnist_test.csv")
         end
-        df_te = CSV.read("mnist_test.csv",header = false , DataFrame)
-        return df_tr, df_te
+        df_e = CSV.read("mnist_test.csv",header = false , DataFrame)
+        return df_r, df_e
     elseif name == "iris"
         url = "https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv"
         if !(isfile("iris.csv"))

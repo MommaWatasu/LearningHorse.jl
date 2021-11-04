@@ -16,9 +16,5 @@ julia> loss(y, t)
 0.75
 ```
 """
-function mse(y, t; back = false)
-    if back == true
-        return 2(y .- t)
-    end
-    return mean((y .- t) .^ 2)
-end
+mse(y, t) = mean(y.-t).^2
+mse(y, t, back::Bool) = @. 2(y-t)

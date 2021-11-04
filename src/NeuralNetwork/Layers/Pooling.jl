@@ -48,7 +48,7 @@ function (mp::MaxPool)(x::Array{T, N}) where {T, N}
     return reshape(maximum(IC.x, dims = 2), IC.Oh, IC.Ow, IC.b, IC.c)
 end
 
-function (mp::MaxPool)(x::Array{T, N}, record::Dict, i) where {T, N}
+function (mp::MaxPool)(x::Array{T, N}, record::Array, i) where {T, N}
     if N != 4
         x = x[:, :, :, :]
     end
@@ -60,7 +60,7 @@ function (mp::MaxPool)(x::Array{T, N}, record::Dict, i) where {T, N}
     for i in m r[i] = 1 end
     mp.record = r
     m = reshape(IC.x[m], IC.Oh, IC.Ow, IC.b, IC.c)
-    record[i+1] = (x, m)
+    record[i+1] = (m, m)
     return m
 end
 
@@ -73,3 +73,5 @@ function (mp::MaxPool)(Δ, z, back::Bool)
     Δ = reshape(x .* mp.record, B*Oh*Ow, C*k[1]*k[2])' 
     return Col2Im(Δ, k, mp.shape, mp.stride, mp.padding).x
 end
+
+trainable(M::MaxPool) = tuple()

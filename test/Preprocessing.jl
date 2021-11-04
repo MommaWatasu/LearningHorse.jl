@@ -1,16 +1,45 @@
+using LearningHorse.Preprocessing
+
 @testset "Preprocessing" begin
-    for (a, x) in zip(1:2, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [1 2 3 4 5; 2 3 4 5 6]])
-        sd = Preprocessing.SS.fit_transform(x, axis = a)
-        inv = Preprocessing.SS.inverse_transform(sd[1], sd[2], axis = a)
-        p = Preprocessing.SS.fit(x, axis = a)
-        @test Preprocessing.SS.transform(x, p, axis = a) == sd[1]
-        sd = Preprocessing.MM.fit_transform(x, axis = a)
-        inv = Preprocessing.MM.inverse_transform(sd[1], sd[2], axis = a)
-        p = Preprocessing.MM.fit(x, axis = a)
-        @test Preprocessing.MM.transform(x, p, axis = a) == sd[1]
-        sd = Preprocessing.RS.fit_transform(x, axis = a)
-        inv = Preprocessing.RS.inverse_transform(sd[1], sd[2], axis = a)
-        p = Preprocessing.RS.fit(x, axis = a)
-        @test Preprocessing.RS.transform(x, p, axis = a) == sd[1]
+    
+    #generating data
+    x = 5 .+ 25 .* rand(20)
+    t = 170 .- 108 .* exp.(-0.2 .* x) .+ 4 .* rand(20)
+    x1 = 23 .* (t ./ 100).^2 .+ 2 .* rand(20)
+    x1 = hcat(x, x1)
+
+    #Standard Scaler
+    @testset "Standard Scaler" begin
+        scaler = Standard()
+        @test_nowarn Preprocessing.fit!(scaler, x)
+        @test_nowarn transform!(scaler, x)
+        x2 = fit_transform!(scaler, x)
+        @test inv_transform!(scaler, x2) == x
+        @test_throws DimensionMismatch transform!(scaler, x1)
+        @test_nowarn fit_transform!(scaler, x1)
     end
+
+    #MinMaxScaler
+    @testset "MinMax Scaler" begin
+        scaler = MinMax()
+        @test_nowarn Preprocessing.fit!(scaler, x)
+        @test_nowarn transform!(scaler, x)
+        x2 = fit_transform!(scaler, x)
+        @test inv_transform!(scaler, x2) == x
+        @test_throws DimensionMismatch transform!(scaler, x1)
+        @test_nowarn x2 = fit_transform!(scaler, x1)
+    end
+    
+    @testset "Robust Scaler" begin
+        scaler = Robust()
+        @test_nowarn Preprocessing.fit!(scaler, x)
+        @test_nowarn transform!(scaler, x)
+        x2 = fit_transform!(scaler, x)
+        @test inv_transform!(scaler, x2) == x
+        @test_throws DimensionMismatch transform!(scaler, x1)
+        @test_nowarn x2 = fit_transform!(scaler, x1)
+    end
+    
+    ##TODO : add the test for Data.jl
+    
 end

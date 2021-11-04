@@ -1,59 +1,51 @@
-using Statistics
-function fit(x; axis = 1)
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [quantile(x, 1/4), quantile(x, 1/2), quantile(x, 3/4)]
-    else
-        p = []
-        for i in 1:size(x)[2]
-            push!(p, [quantile(x[:, i], 1/4), quantile(x[:, i], 1/2), quantile(x[:, i], 3/4)])
-        end
-    end 
-    return p
+mutable struct Robust
+    p::AbstractVecOrMat
+    Robust() = new(Array{Float64}(undef, 0))
 end
-function transform(x, p; axis = 1)
-    if axis == 2
-        x = x'
+
+function fit!(scaler::Robust, x; dims=1)
+    if dims == 1
+        scaler.p = hcat([quantile(x[:, i], [0.25, 0.5, 0.75]) for i in 1 : size(x, 2)]...)
+    elseif dims == 2
+        scaler.p = hcat([quantile(x[i, :], [0.25, 0.5, 0.75]) for i in 1 : size(x, 1)]...)
     end
-    if ndims(x) == 1
-        t = (x .- p[2]) / (p[3] - p[1])
-    else
-        t = []
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i] .- p[i][2]) / (p[i][3] - p[i][1]))
-        end
-    end
-    return t
 end
-function inverse_transform(x, p; axis = 1)
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        t = (x * (p[3] - p[1])) .+ p[2]
-    else 
-        t = []
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i][1] * (p[i][3] - p[i][1])) .+ p[i][2])
+
+rs(x, q1, q2, q3) = @. (x-q2) / (q3-q1)
+
+function transform!(scaler::Robust, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = rs(x[:, i], p[:, i]...)
         end
-    end 
-    return t
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = rs(x[i, :], p[:, i]...)
+        end
+    end
+    return x
 end
-function fit_transform(x; axis = 1)
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [quantile(x, 1/4), quantile(x, 1/2), quantile(x, 3/4)]
-        t = (x .- p[2]) / (p[3] - p[1])
-    else
-        t, p = [], []
-        for i in 1:size(x)[2]
-            push!(p, [quantile(x[:, i], 1/4), quantile(x[:, i], 1/2), quantile(x[:, i], 3/4)])
-            push!(t, (x[:, i] .- p[i][2]) / (p[i][3] - p[i][1]))
+
+function fit_transform!(scaler::Robust, x; dims=1)
+    fit!(scaler, x, dims=dims)
+    transform!(scaler, x; dims=dims)
+end
+
+irs(x, q1, q2, q3) = @. x*(q3-q1)+q2
+
+function inv_transform!(scaler::Robust, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = irs(x[:, i], p[:, i]...)
+        end
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = irs(x[i, :], p[:, i]...)
         end
     end
-    return t, p
+    return x
 end
