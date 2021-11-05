@@ -16,4 +16,7 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-      - run: julia -e 'ENV["COVERALLS_TOKEN"]="CaP2vxTHQ4W4VMYzgqQ0bhbg79LVCnR8z"; using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+      - run: julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; LCOV.writefile("./coverage/lcov.info", process_folder())'
+      - uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
