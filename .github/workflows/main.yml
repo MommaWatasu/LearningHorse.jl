@@ -16,4 +16,4 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-      - run: julia -e 'using Pkg; Pkg.add("Coverage"); Coveralls.submit(Coveralls.process_folder())'
+      - run: julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
