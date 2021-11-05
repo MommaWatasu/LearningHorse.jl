@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         julia-version: ['1.0.0', '1.5', 'nightly']
-    name: build LearningHorse
+    name: Build LearningHorse
     steps:
       - name: Set up Julia 
         uses: actions/checkout@v2
@@ -18,8 +18,15 @@ jobs:
       - name: Test package
         uses: julia-actions/julia-buildpkg@v1
         uses: julia-actions/julia-runtest@v1
-      after_success:
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1
+  Send:
+    runs-on:  ubuntu-latest
+    name: Send Coverage
+    steps:
+      - name: Send to Coveralls
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          github-token: ${{ secrets.COVERALLS_TOKEN }}
+#      - name: Upload Coverage
+#        uses: codecov/codecov-action@v1
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
