@@ -12,103 +12,53 @@ shape = box,
 fillcolor = "#ffffff"
 ];
 node1 [
-<<<<<<< HEAD
-label = "X[1]<5.55
+label = "X[1]<3.4
 samples=150
-value=[52, 48, 50]"
+value=[51, 48, 51]"
 ];
 node2 [
-label = "X[1]<3.05
-samples=150
-value=[53, 48, 49]"
-];
-node3 [
-label = "X[1]<5.5
-samples=150
-value=[41, 60, 49]"
-];
-node4 [
-label = "X[1]<5.55
-samples=150
-value=[46, 59, 45]"
-];
-node5 [
-label = "X[1]<3.05
-samples=150
-value=[53, 48, 49]"
-=======
 label = "X[1]<3.35
 samples=150
-value=[46, 51, 53]"
-];
-node2 [
-label = "X[1]<5.6
-samples=150
-value=[55, 43, 52]"
+value=[59, 49, 42]"
 ];
 node3 [
 label = "X[1]<5.55
 samples=150
-value=[52, 46, 52]"
+value=[54, 43, 53]"
 ];
 node4 [
-label = "X[1]<3.05
+label = "X[1]<3.35
 samples=150
-value=[51, 46, 53]"
+value=[42, 61, 47]"
 ];
 node5 [
-label = "X[1]<5.5
+label = "X[1]<3.1
 samples=150
-value=[54, 50, 46]"
->>>>>>> 20446673102118e899e92cee47b828a4b8a6e14a
+value=[42, 56, 52]"
 ];
 node6 [
-label = "X[1]<3.35
-samples=150
-<<<<<<< HEAD
-value=[56, 47, 47]"
-];
-node7 [
 label = "X[1]<3.05
 samples=150
-value=[50, 48, 52]"
+value=[50, 45, 55]"
 ];
-node8 [
+node7 [
 label = "X[1]<3.35
 samples=150
-value=[50, 52, 48]"
+value=[55, 34, 61]"
+];
+node8 [
+label = "X[1]<3.05
+samples=150
+value=[43, 53, 54]"
 ];
 node9 [
 label = "X[1]<3.15
 samples=150
-value=[51, 41, 58]"
+value=[53, 53, 44]"
 ];
 node10 [
 label = "X[1]<5.5
 samples=150
-value=[62, 40, 48]"
-=======
-value=[49, 50, 51]"
-];
-node7 [
-label = "X[1]<5.5
-samples=150
-value=[45, 60, 45]"
-];
-node8 [
-label = "X[1]<3.45
-samples=150
-value=[62, 48, 40]"
-];
-node9 [
-label = "X[1]<5.55
-samples=150
-value=[48, 59, 43]"
-];
-node10 [
-label = "X[1]<3.35
-samples=150
-value=[43, 54, 53]"
->>>>>>> 20446673102118e899e92cee47b828a4b8a6e14a
+value=[51, 46, 53]"
 ];
 }

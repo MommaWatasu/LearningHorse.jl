@@ -11,7 +11,7 @@ mms(x, ma, mi) = @. (x-mi) / (ma - mi)
 
 function transform!(scaler::MinMax, x; dims=1)
     p = scaler.p
-    check_size(x, p)
+    check_size(x, p, dims)
     if dims == 1
         for i in 1 : size(x, 2)
             x[:, i] = mms(x[:, i], p[:, i]...)
@@ -28,7 +28,7 @@ imms(x, ma, mi) = @. x*(ma-mi)+mi
 
 function inv_transform!(scaler::MinMax, x; dims=1)
     p = scaler.p
-    check_size(x, p)
+    check_size(x, p, dims)
     if dims == 1
         for i in 1 : size(x, 2)
             x[:, i] = imms(x[:, i], p[:, i]...)

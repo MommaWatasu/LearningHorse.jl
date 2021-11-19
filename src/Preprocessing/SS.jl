@@ -11,7 +11,7 @@ ss(x, m, s) = @. (x-m)/s
 
 function transform!(scaler::Standard, x; dims=1)
     p = scaler.p
-    check_size(x, p)
+    check_size(x, p, dims)
     if dims == 1
         for i in 1 : size(x, 2)
             x[:, i] = ss(x[:, i], p[:, i]...)
@@ -33,7 +33,7 @@ iss(x, m, s) = @. x*s+m
 
 function inv_transform!(scaler::Standard, x; dims=1)
     p = scaler.p
-    check_size(x, p)
+    check_size(x, p, dims)
     if dims == 1
         for i in 1 : size(x, 2)
             x[:, i] = iss(x[:, i], p[:, i]...)
