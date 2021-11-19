@@ -4,7 +4,7 @@ All Preprocessing functions have the same arguments and specifications, so write
 
 ### How to use Standard Scaler
 Use the standard scaler (and other preprocessing functions) as follows.
-```@example
+```
 x = [1 2 3 4 5; 2 3 4 5 6]]
 sd = Preprocessing.SS.fit_transform(x, axis = 2)
 println("sd:", sd)

@@ -1,58 +1,47 @@
-function fit(x; axis = 1)　#this function dose only performs calculations.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [maximum(x), minimum(x)]
-    else
-        p = []
-        for i in 1:size(x)[2]
-            push!(p, [maximum(x[:, i]), minimum(x[:, i])])
-        end
-    end
-    return p
+mutable struct MinMax
+    p::AbstractVecOrMat
+    MinMax() = new(Array{Float64}(undef, 0))
+end
+
+function fit!(scaler::MinMax, x; dims=1)
+    scaler.p = vcat(maximum(x, dims=dims), minimum(x, dims=dims))
 end 
-function transform(x, p; axis = 1)　#Only transform is performed based on the calculation results of the'fit'function and'fit_transform'function.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        t = (x .- p[2]) / (p[1] - p[2])
-    else
-        t = []
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i] .- p[i][2]) / (p[i][1] - p[i][2]))
+
+mms(x, ma, mi) = @. (x-mi) / (ma - mi)
+
+function transform!(scaler::MinMax, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = mms(x[:, i], p[:, i]...)
+        end
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = mms(x[i, :], p[:, i]...)
         end
     end
-    return t
+    return x
 end
-function inverse_transform(x, p; axis = 1)
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        t = (x * (p[1] - p[2])) .+ p[2]
-    else 
-        t = []
-        for i in 1:size(x)[2]
-            push!(t, (x[:, i][1] * (p[i][1] - p[i][2])) .+ p[i][2])
+
+imms(x, ma, mi) = @. x*(ma-mi)+mi
+
+function inv_transform!(scaler::MinMax, x; dims=1)
+    p = scaler.p
+    check_size(x, p)
+    if dims == 1
+        for i in 1 : size(x, 2)
+            x[:, i] = imms(x[:, i], p[:, i]...)
         end
-    end 
-    return t
+    elseif dims == 2
+        for i in 1 : size(x, 1)
+            x[i, :] = imms(x[i, :], p[:, i]...)
+        end
+    end
+    return x
 end
-function fit_transform(x; axis = 1)　#This function handles both the fit function and the transform function.
-    if axis == 2
-        x = x'
-    end
-    if ndims(x) == 1
-        p = [maximum(x), minimum(x)]
-        t = (x .- p[2]) / (p[1] - p[2])
-    else
-        p, t = [], []
-        for i in 1:size(x)[2]
-            push!(p, [maximum(x[:, i]), minimum(x[:, i])])
-            push!(t, (x[:, i] .- p[i][2]) / (p[i][1] - p[i][2]))
-        end
-    end
-    return t, p
+
+function fit_transform!(scaler::MinMax, x; dims=1)
+    fit!(scaler, x, dims=dims)
+    transform!(scaler, x, dims=dims)
 end

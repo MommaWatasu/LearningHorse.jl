@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        julia-version: ['1.0.0', '1.5', 'nightly']
+        julia-version: ['nightly']
     name: build LearningHorse
     steps:
       - uses: actions/checkout@v2
@@ -16,15 +16,5 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-#  Send:
-#    if: ${{ success() }}
-#    needs: Build
-#    runs-on: ubuntu-latest
-#    name: Codecov
-#    steps:
-#      - uses: codecov/codecov-action@v1
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#      - uses: coverallsapp/github-action@v1.1.2
-#        with:
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: julia -e 'ENV["COVERALLS_TOKEN"]="v8yysGhRvHpmHr56b5dG21aLJQcnrQiUP"; using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit_local(Coveralls.process_folder())'
+      - run: julia -e 'ENV["CODECOV_TOKEN"]="ca02da57-bba4-4dbf-a3a6-500e0f77a32c"; using Coverage; Codecov.submit_local(Codecov.process_folder())'
