@@ -1,7 +1,7 @@
 name = "LearningHorse"
 uuid = "62371590-58c0-453a-97c0-b8b10383e1ee"
 authors = ["Watasu Monma"]
-version = "0.3.0"
+version = "0.3.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
