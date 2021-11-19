@@ -12,6 +12,7 @@ shape = box,
 fillcolor = "#ffffff"
 ];
 node1 [
+<<<<<<< HEAD
 label = "X[1]<5.55
 samples=150
 value=[52, 48, 50]"
@@ -35,10 +36,36 @@ node5 [
 label = "X[1]<3.05
 samples=150
 value=[53, 48, 49]"
+=======
+label = "X[1]<3.35
+samples=150
+value=[46, 51, 53]"
+];
+node2 [
+label = "X[1]<5.6
+samples=150
+value=[55, 43, 52]"
+];
+node3 [
+label = "X[1]<5.55
+samples=150
+value=[52, 46, 52]"
+];
+node4 [
+label = "X[1]<3.05
+samples=150
+value=[51, 46, 53]"
+];
+node5 [
+label = "X[1]<5.5
+samples=150
+value=[54, 50, 46]"
+>>>>>>> 20446673102118e899e92cee47b828a4b8a6e14a
 ];
 node6 [
 label = "X[1]<3.35
 samples=150
+<<<<<<< HEAD
 value=[56, 47, 47]"
 ];
 node7 [
@@ -60,5 +87,28 @@ node10 [
 label = "X[1]<5.5
 samples=150
 value=[62, 40, 48]"
+=======
+value=[49, 50, 51]"
+];
+node7 [
+label = "X[1]<5.5
+samples=150
+value=[45, 60, 45]"
+];
+node8 [
+label = "X[1]<3.45
+samples=150
+value=[62, 48, 40]"
+];
+node9 [
+label = "X[1]<5.55
+samples=150
+value=[48, 59, 43]"
+];
+node10 [
+label = "X[1]<3.35
+samples=150
+value=[43, 54, 53]"
+>>>>>>> 20446673102118e899e92cee47b828a4b8a6e14a
 ];
 }

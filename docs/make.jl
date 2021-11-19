@@ -1,8 +1,6 @@
 using Documenter
-#using LearningHorse.NeuralNetwork
-include("/home/ubuntu/code/LearningHorse/src/Regression/Regression.jl")
-#include("/home/ubuntu/code/LearningHorse/src/Regression/BFM.jl")
-include("/home/ubuntu/code/LearningHorse/src/NeuralNetwork/NN.jl")
+using LearningHorse.NeuralNetwork
+
 makedocs(;
     sitename="LearningHorse",
     pages = [
