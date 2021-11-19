@@ -4,10 +4,9 @@
 
 |Jenkins|GitHub Actions|Coveralls|CodeCov|
 |:-----:|:------------:|:-----:|:------:|
-|[![Build Status](http://ik1-414-39231.vs.sakura.ne.jp:8443/job/LearningHorse-CI/badge/icon)](http://ik1-414-39231.vs.sakura.ne.jp:8443/job/LearningHorse-CI/)|[![LearningHorseCI](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml/badge.svg)](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml)|[![Coverage Status](https://coveralls.io/repos/github/QGMW22/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/QGMW22/LearningHorse.jl?branch=master)|[![Coverage](https://codecov.io/gh/QGMW22/LearningHorse.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QGMW22/LearningHorse.jl)|
+|[![Build Status](https://ik1-414-39231.vs.sakura.ne.jp:8443/job/LearningHorse-CI/badge/icon)](http://ik1-414-39231.vs.sakura.ne.jp:8443/job/LearningHorse-CI/)|[![LearningHorseCI](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml/badge.svg)](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml)|[![Coverage Status](https://coveralls.io/repos/github/QGMW22/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/QGMW22/LearningHorse.jl?branch=master)|[![Coverage](https://codecov.io/gh/QGMW22/LearningHorse.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QGMW22/LearningHorse.jl)|
 
-LearningHorse is Julia's machine learning library.At the moment, the algorithms that can be used are limited and unstable,
-but we will continue to develop them.
+LearningHorse is machine learning library for JuliaLang. You can use various algorithms, from basic algorithms such as linear regression to neuralnetwork.
 
 ## Resources
 - Documentation:[LearningHorse docs](https://ik1-414-39231.vs.sakura.ne.jp/learninghorse/)
