@@ -3,8 +3,10 @@ using Statistics
 using Test
 
 @testset "LearningHorse.jl" begin
+    test_home_dir = pwd()
     include("./Preprocessing.jl")
     @info "Complete the test for Preprocessing"
+    cd(test_home_dir)
     include("./LossFunction.jl")
     @info "Complete the test for LossFunction"
     include("./Regression.jl")

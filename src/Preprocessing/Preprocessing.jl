@@ -1,9 +1,10 @@
 module Preprocessing
 
-export Standard, MinMax, Robust, transform!, fit_transform!, inv_transform!
+export Standard, MinMax, Robust, transform!, fit_transform!, inv_transform!, dataloader, split_data
 
 using Statistics
 using Random
+using Downloads
 using CSV
 using DataFrames
 

@@ -6,12 +6,12 @@ function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
     if name == "MNIST"
         if !(isfile("mnist_train.csv"))
             yn = Base.prompt("Can I download the mnist_train.csv(110MB)? (y/n)")
-            yn == "y" && download("https://pjreddie.com/media/files/mnist_train.csv", "mnist_train.csv")
+            yn == "y" && Downloads.download("https://pjreddie.com/media/files/mnist_train.csv", "mnist_train.csv")
         end
         df_r = CSV.read("mnist_train.csv", header = false, DataFrame)
         if !(isfile("mnist_test.csv"))
             yn = Base.prompt("Can I download the mnist_test.csv(18MB)? (y/n)")
-            yn == "y" && download("https://pjreddie.com/media/files/mnist_test.csv", "mnist_test.csv")
+            yn == "y" && Downloads.download("https://pjreddie.com/media/files/mnist_test.csv", "mnist_test.csv")
         end
         df_e = CSV.read("mnist_test.csv",header = false , DataFrame)
         return df_r, df_e
@@ -19,7 +19,7 @@ function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
         url = "https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv"
         if !(isfile("iris.csv"))
             yn = Base.prompt("Can I download the iris.csv(4KB)? (y/n)")
-            yn == "y" && download(url, "iris.csv")
+            yn == "y" && Downloads.download(url, "iris.csv")
         end
         df = CSV.read("iris.csv", DataFrame)
         return df
@@ -27,17 +27,13 @@ function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
         url = "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
         if !(isfile("BostonHousing.csv"))
             yn = Base.prompt("Can I download the BostonHousing.csv(36KB)? (y/n)")
-            yn == "y" && download(url, "BostonHousing.csv")
+            yn == "y" && Downloads.download(url, "BostonHousing.csv")
         end
         df = CSV.read("BostonHousing.csv", DataFrame)
         return df
     end
-    try
-        df = CSV.read(name, header = header, DataFrame)
-        return df
-    catch
-        @warn "$name doesn't exist, so you can't get the data!"
-    end
+    df = CSV.read(name, header = header, DataFrame)
+    return df
 end
 
 struct DataSplitter

@@ -47,6 +47,15 @@ using LearningHorse.Preprocessing
         @test_nowarn x2 = fit_transform!(scaler, x1)
     end
     
-    ##TODO : add the test for Data.jl
-    
+    #Data Preprocessor
+    @testset "Data Preprocessing" begin
+        originstdin = stdin
+        f = open("data_test.txt")
+        redirect_stdin(f)
+        @test_nowarn dataloader("MNIST")
+        @test_nowarn dataloader("iris")
+        @test_nowarn dataloader("BostonHousing")
+        @test_throws ArgumentError dataloader("dammy.csv")
+        close(f)
+    end
 end
