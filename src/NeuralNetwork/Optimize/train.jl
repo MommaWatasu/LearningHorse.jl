@@ -1,47 +1,24 @@
-include("./optimizers.jl")
-include("./grad.jl")
+include("optimizers.jl")
 
 function update!(opt, x, g)
     x .-= apply!(opt, x, g)
 end
 
-function update!(opt, G::Grads)
-    ps = G.ps
-    g = G.g
-    for i in 1 : length(ps)
-        x = ps[i]
-        isnothing(x) && continue
-        update!(opt, x, g[i])
-    end
-end
-
-function update!(opt, gs::Zygote.Grads, ps::Zygote.Params)
+function update!(opt, gs::Zygote.Grads, ps::Params)
     for p in ps
         isnothing(gs[p]) && continue
         update!(opt, p, gs[p])
     end
 end
 
-function train!(m::NetWork, loss, data, opt)
-    ps = Params(m)
-    for d in data
-        try
-            g = grad(m, d, loss, ps)
-            update!(opt, g)
-        catch
-            @warn "you can't train by one data because something wrong with the data!"
-        end
-    end
-end
-
 make_d_tuple(d::Tuple) = d
 make_d_tuple(d) = tuple(d)
 
-function train!(m::NetWork, loss, data, opt, AD::Bool)
-    ps = zygote_params(m)
+function train!(N, loss, data, opt)
+    ps = params(N)
     for d in data
         try
-            g = Zygote.gradient(ps) do
+            g = gradient(ps) do
                 loss(make_d_tuple(d)...)
             end
             update!(opt, g, ps)
@@ -49,4 +26,24 @@ function train!(m::NetWork, loss, data, opt, AD::Bool)
             @warn "you can't train by one data because something wrong with the data!"
         end
     end
+end
+
+"""
+    @epochs n ex
+This macro cruns `ex` `n` times. Basically this is useful for learning NeuralNetwork.
+
+# Example
+julia> a = 1
+
+julia> @epochs 1000 a+=1
+progress:1000/1000
+julia>a
+1001
+"""
+macro epochs(n, ex)
+    :(for i in 1 : $(esc(n))
+        progress = "progress:"*string(i)*"/"*string($(esc(n)))*"\r"
+        print(progress)
+        $(esc(ex))
+    end)
 end

@@ -24,8 +24,7 @@ julia> loss(y, t)
 0.75
 ```
 """
-mse(y, t; dims=1) = mean(y.-t, dims=dims).^2
-mse(y, t, back::Bool) = @. 2(y-t)
+mse(y, t) = mean(y.-t).^2
 
 """
     cee(y, t, dims = 1)
@@ -39,7 +38,6 @@ cee (generic function with 1 method)
 julia> y, t
 ```
 """
-cee(y, t; dims=1) = mean(-sum(t.*safe_log(y), dims=dims), dims=dims)
-cee(y, t, back::Bool) = -(t ./ y)
+cee(y, t) = mean(-sum(t.*safe_log(y)))
 
 end

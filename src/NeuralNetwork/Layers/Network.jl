@@ -6,9 +6,8 @@ abstract type NParam <: Layer end
 abstract type Param <: Layer end
 export Param, NParam
 
-include("../activations.jl")
-include("./Pooling.jl")
-include("./Conv.jl")
+include("Pooling.jl")
+include("Conv.jl")
 
 """
     NetWork(layers...)
@@ -43,21 +42,12 @@ function Base.getindex(N::NetWork, i::Int)
     return N.net[i]
 end
 
-function (N::NetWork)(x; rf=false)
+function (N::NetWork)(x)
     layers = N.net
-    if !rf
-        for i in 1 : length(layers)
-            x = layers[i](x)
-        end
-        return x
-    else
-        record = Array{Tuple}(undef, length(layers)+1)
-        record[1] = ([0.0], x)
-        for i in 1 : length(layers)
-            x = layers[i](x, record, i)
-        end
-        return record
+    for i in 1 : length(layers)
+        x = layers[i](x)
     end
+    return x
 end
 
 function Base.show(io::IO, N::NetWork)
@@ -106,23 +96,9 @@ function Base.show(io::IO, D::Dense)
     print("Dense(IO:$i => $o, σ:$σ)")
 end
 
-function (D::Dense)(x::AbstractVecOrMat)
-    w, b, σ = D.w, D.b, D.σ
-    σ.(w*x.+b)
-end
-
-function (D::Dense)(x::Array, record::Array, i::Int)
-    w, b, σ = D.w, D.b, D.σ
-    z::Array = w * x
-    a::Array = σ.(z .+ b)
-    record[i+1] = (z, a)
-    a
-end
-
-function (D::Dense)(Δ::Array, z::Array, back::Bool)
-    #TODO:Corresponds to a batch of x.
-    w, σ = D.w, D.σ
-    w'*Δ.*σ.(z, true)
+function (D::Dense)(X::AbstractVecOrMat)
+    W, b, σ = D.w, D.b, D.σ
+    σ.(muladd(W, X, b))
 end
 
 """
@@ -146,20 +122,8 @@ mutable struct Flatten <: NParam
 end
 
 function (F::Flatten)(x::Array)
-    F.csize = size(x)
-    return reshape(x, length(x))
+    return reshape(x, :, size(x)[end])
 end
-
-function (F::Flatten)(x::Array, record::Array, i)
-    F.csize = size(x)
-    a = reshape(x, :)
-    record[i+1] = (a, a)
-    return a
-end
-
-trainable(F::Flatten) = tuple()
-
-(F::Flatten)(Δ::Array, z::Array, back::Bool) = reshape(Δ, F.csize...)
 
 """
     Dropout(p)
@@ -184,6 +148,13 @@ julia> D(rand(10))
 """
 struct Dropout <: NParam
     p::Float64
+    function Dropout(p)
+        if 0<=p<=1
+            new(p)
+        else
+            throw(ArhumentError("p must be between 0 and 1!"))
+        end
+    end
 end
 
 function Base.show(io::IO, D::Dropout)
@@ -192,23 +163,23 @@ function Base.show(io::IO, D::Dropout)
     print(")")
 end
 
-dropout_kernel(y::T, p::Float64, q::Float64) where {T} = (y > p) ? float(1 / q) : float(0)
+_dropout_kernel(y::T, p, q) where {T} = (y > p) ? T(1 / q) : T(0)
 
-function (D::Dropout)(x::Array)
+function dropout_kernel(x, p)
     y = rand!(similar(x))
-    y = dropout_kernel.(y, D.p, 1 - D.p)
-    x .* y
+    y .= _dropout_kernel.(y, p, 1-p)
+    return y
 end
 
-function (D::Dropout)(x::AbstractArray, record::Array, i::Int)
-    a = D(x)
-    record[i+1] = (a, a)
-    a
+function (D::Dropout)(x)
+    y = dropout_kernel(x, D.p)
+    return x .* y
 end
 
-(D::Dropout)(Δ::Array, z::Array, back::Bool) = Δ
-
-trainable(D::Dropout) = tuple()
+@adjoint function (D::Dropout)(x)
+    y = dropout_kernel(x, D.p)
+    return x.*y, Δ -> (Δ.*y, nothing)
+end
 
 """
      add_layer!(model, layers...)
@@ -231,26 +202,5 @@ end
 function add_layer!(model::NetWork, layers...)
     for layer in layers
         add_layer!(model, layer)
-    end
-end
-
-"""
-    @epochs n ex
-This macro cruns `ex` `n` times. Basically this is useful for learning NeuralNetwork.
-
-# Example
-julia> a = 1
-
-julia> @epochs 1000 a+=1
-progress:1000/1000
-julia>a
-1001
-"""
-macro epochs(n, ex)
-    for i in 1 : n
-        progress = "progress:"*string(i)*"/"*string(n)*"\r"
-        print(progress)
-        #@info "Epoch $i"
-        eval(ex)
     end
 end
