@@ -15,7 +15,7 @@ makedocs(;
             "Classification" => "Classification.md",
             "Preprocessing" => "Preprocessing.md",
             "LossFunction" => "LossFunction.md",
-            "NeuralNetwork" => "neuralnetwork.md",
+            "NeuralNetwork" => "NeuralNetwork.md",
         ],
         "日本語版マニュアル" => "Japanese.md"
     ]

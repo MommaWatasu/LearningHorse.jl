@@ -1,6 +1,7 @@
 module Tree
 
-using StatsBase
+#using StatsBase
+include("../utils.jl")
 
 export DecisionTree, MV, RandomForest
 

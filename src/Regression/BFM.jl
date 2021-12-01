@@ -4,8 +4,14 @@ end
 
 
 """
-    Regression.make_design_matrix(x, dims)
+    make_design_matrix(x, dims)
 This function return the design matrix.
+
+# Example
+```jldoctest regression
+julia> make_design_matrix(x, dims = 2) |> size
+(20, 5)
+```
 """
 function make_design_matrix(x; dims = 2)
     n_datas, n_features = size(x)

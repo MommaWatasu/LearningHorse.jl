@@ -1,3 +1,19 @@
+"""
+    MV(path, forest; rounded=false, bg="#ffffff", fc="#000000", label="Tree", fs="18")
+Make DicisionTree and RandomForest Visual(make a dot file, see also [Graphviz](https://graphviz.org/)). The arguments are as follows:
+- `path` : The full path of the dot file. The suffix must be `.dot`.
+- `forest` : The model.
+- `rounded` : If `rounded` is `true`, the nodes will be rounded.
+- `bg` : Background color, type of this must be `String`.
+- `fc` : Font color, type of this must be `String`.
+- `label` : The label of the graph.
+- `fs` : Font size, type of this must be `String`.
+
+# Example
+```repl
+julia> MV("/home/ubuntu/test.dot", model, rounded = true)
+```
+"""
 function MV(path, forest; rounded = false, bg = "#ffffff", fc = "#000000", label = "Tree", fs = "18", nc="#ffffff") # Model Visualization
     if path[length(path) - 3 : length(path)] != ".dot"
         throw("The file path you passed is not prefixed with'dot'.")

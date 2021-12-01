@@ -3,16 +3,18 @@ using Statistics
 using Test
 
 @testset "LearningHorse.jl" begin
+    include("utils.jl")
+    @info "Complete the test for utils"
     test_home_dir = pwd()
-    include("./Preprocessing.jl")
+    include("Preprocessing.jl")
     @info "Complete the test for Preprocessing"
     cd(test_home_dir)
-    include("./LossFunction.jl")
+    include("LossFunction.jl")
     @info "Complete the test for LossFunction"
     include("./Regression.jl")
     @info "Complete the test for Regression"
-    include("./Classification.jl")
+    include("Classification.jl")
     @info "Complete the test for Classification"
-    include("./NeuralNetwork.jl")
+    include("NeuralNetwork.jl")
     @info "Complete the test for NeuralNetwork"
 end

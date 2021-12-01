@@ -7,7 +7,6 @@ using LearningHorse.NeuralNetwork
     opt = Descent()
     NN = NetWork(Dense(10=>5, relu), Dense(5=>1, tanh))
     train!(NN, loss, data, opt)
-    println("OK")
     @test_nowarn @epochs 10 train!(NN, loss, data, opt)
     @test typeof(NN[1]) <: Dense
     println(NN)

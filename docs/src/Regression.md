@@ -1,7 +1,13 @@
-## Regression
+# Regression
 
-### How to use LinearRegression
+## Models
 ```@docs
 Regression.LinearRegression
+Regression.Lasso
+Regression.Ridge
+```
+
+## Other
+```@docs
 Regression.make_design_matrix
 ```

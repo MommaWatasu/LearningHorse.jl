@@ -5,6 +5,7 @@ using Statistics
 
 export Regression, Classification, Preprocessing, LossFunction, Tree, NeuralNetwork
 
+include("utils.jl")
 include("./Regression/Regression.jl")
 include("./Classification/Classification.jl")
 include("./Tree/Tree.jl")

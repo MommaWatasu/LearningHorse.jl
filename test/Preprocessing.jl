@@ -53,9 +53,16 @@ using LearningHorse.Preprocessing
         f = open("data_test.txt")
         redirect_stdin(f)
         @test_nowarn dataloader("MNIST")
-        @test_nowarn dataloader("iris")
         @test_nowarn dataloader("BostonHousing")
+        @test_nowarn dataloader("iris")
         @test_throws ArgumentError dataloader("dammy.csv")
         close(f)
+    end
+    
+    @testset "Data Splitter" begin
+        DS = DataSplitter(50, train_size = 0.3)
+        data = rand(5, 50)
+        @test (15, 5) == size(DS(data'))
+        @test (5, 15) == size(DS(data, ndims = 2))
     end
 end

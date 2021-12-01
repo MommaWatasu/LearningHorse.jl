@@ -10,7 +10,7 @@ function bootstrap(x, t, n_trees)
     global using_feature
     for i in 1 : n_trees
         ind = rand(1:length(t), length(t))
-        col = sample(1 : n_features, n_features_forest, replace = false)
+        col = sample(1 : n_features, n_features_forest)
         k = x[ind, col]
         bootstrapped_x[:, :, i] = k[:, :, newaxis]
         bootstrapped_t[i, :] = t[ind]
@@ -19,6 +19,32 @@ function bootstrap(x, t, n_trees)
     return bootstrapped_x, bootstrapped_t, using_feature
 end
 
+"""
+    RandomForest(nt; alpha = 0.01)
+RandomForest Model. `nt` is the number of trees, and `alpha` is the same as `alpha` in DecisionTree.
+
+# Example
+```jldoctest classification
+julia> model = RandomForest(10)
+RandomForest(0.01, 10, DecisionTree[], Vector{Any}[], #undef)
+
+julia> fit!(model, x, t)
+10×1 Matrix{Int64}:
+ 1
+ 2
+ 2
+ 2
+ 2
+ 1
+ 1
+ 1
+ 1
+ 1
+
+julia> println(predict(model, x))
+Any[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+```
+"""
 mutable struct RandomForest
     α::Float64
     n_trees::Int64

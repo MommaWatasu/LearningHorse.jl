@@ -4,6 +4,21 @@ Logistic Regression classifier.
 
 This struct learns classifiers using multi class softmax.
 Parameter `α` indicates the learning rate, and `ni` indicates the number of learnings.
+
+# Example
+```jldoctest classification
+julia> model = Logistic(alpha = 0.1)
+Logistic(0.1, 1000, Matrix{Float64}(undef, 0, 0))
+
+julia> fit!(model, x, ct)
+3×3 Matrix{Float64}:
+  1.80736  1.64037  -0.447735
+ -1.27053  1.70026   2.57027
+  4.84966 -0.473835 -1.37582
+
+julia> println(predict(model, x))
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+```
 """
 mutable struct Logistic
     α::Float64

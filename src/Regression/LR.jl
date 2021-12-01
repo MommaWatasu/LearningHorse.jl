@@ -1,3 +1,45 @@
+"""
+    Lasso(; alpha = 0.1, tol = 1e-4, mi = 1e+8)
+Lasso Regression structure. eEach parameters are as follows:
+- `alpha` : leaarning rate.
+- `tol` : Allowable error.
+- `mi` : Maximum number of learning.
+
+# Example
+```jldoctest regression
+julia> model = Lasso()
+Lasso(Float64[], 0.1, 0.0001, 100000000)
+
+julia> fit!(model, x, t)
+3-element Vector{Float64}:
+   0.0
+   0.5022766549841176
+ 154.43624186616267
+
+julia> predict(model, x, t)
+20-element Vector{Float64}:
+ 188.64541774549468
+ 187.30088075704523
+ 181.5191726873298
+ 184.15748544986084
+ 185.72158909964372
+ 176.33798923891868
+ 185.80014722707335
+ 184.71565381947883
+ 189.20524796663838
+ 189.67502263476888
+ 189.50409373058318
+ 188.39535519538825
+ 188.481083670683
+ 188.88872347085172
+ 182.8477136378307
+ 188.64156231429416
+ 181.43996475587224
+ 188.9400571253936
+ 179.39836073711297
+ 185.6065850765288
+```
+"""
 mutable struct Lasso
     w::Array
     α::Float64

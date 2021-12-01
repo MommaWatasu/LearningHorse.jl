@@ -9,7 +9,13 @@ NetWork
 ## Layers
 
 ```@docs
+Conv
+
 Dense
+
+Dropout
+
+Flatten
 ```
 
 ## Optimizers

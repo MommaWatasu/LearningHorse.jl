@@ -82,6 +82,27 @@ function grow(x, t, classes, gini, alpha, branch_count)
     end
 end
 
+"""
+    DecisionTree(; alpha = 0.01)
+Normal DecisionTree. `alpha` specify the complexity of the model. If it's small, it's complicated, and if it's big, it's simple.
+
+# Example
+```jldoctest classification
+julia> tree = DecisionTree()
+DecisionTree(0.01, Dict{Any, Any}(), Any[])
+
+julia> fit!(tree, x, t)
+Dict{String, Any} with 5 entries:
+  "left"        => Dict{String, Any}("left"=>Dict{String, Union{Nothing, Vector…
+  "class_count" => [8, 13, 16]
+  "threshold"   => 5.7
+  "right"       => Dict{String, Any}("left"=>Dict{String, Union{Nothing, Vector…
+  "feature_id"  => 1
+
+julia> println(predict(tree, x))
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+```
+"""
 mutable struct DecisionTree
     α::Float64
     tree::Dict

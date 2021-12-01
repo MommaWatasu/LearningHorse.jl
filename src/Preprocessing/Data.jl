@@ -1,4 +1,20 @@
-function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
+"""
+    dataloader(name; header=true, dir=learninghorsedatasets)
+Load a data for Machine Learning. `name` is either the name of the datasets or the full path of the data file to be loaded. The following three can be specified as the name of the dataset in `name`.
+- `MNIST` : The MNIST Datasets
+- `iris` : The iris Datasets
+- `BostonHousing` : Boston Housing DataSets
+And these datasets are downloaded and saved by creating a `dir` folder under the home directly(i.e. it is saved in the `{homedirectly}/learninghorsedatasets` by default).
+When importing a data file, you can specify whether to read the header with `header`.
+
+# Example
+```repl
+julia> dataloader("MNIST");
+
+julia> dataloader("/home/ubuntu/data/data.csv", header = false)
+```
+"""
+function dataloader(name; header = true, dir = "learningdatasets")
     hd = homedir()
     dir = joinpath(hd, dir)
     mkpath(dir)
@@ -36,43 +52,40 @@ function dataloader(name; header = true, dir = "learningdatasets", tt = "both")
     return df
 end
 
+"""
+    DataSplitter(ndata; test_size=nothing, train_size=nothing)
+Split the data into test data and training data. `ndata` is the number of the data, and you must specify either `test_size` or `train_size`. thease parameter can be proprtional or number of data.
+
+!!! note
+    If both `test_size` and `train_size` are specified, `test_size` takes precedence.
+
+#Example
+```jldoctest
+julia> x = rand(20, 2);
+
+julia> DS = DataSplitter(50, train_size = 0.3);
+
+julia> DS(x, dims = 2) |> size
+(14, 2)
+```
+"""
 struct DataSplitter
     #TODO: make it possible to DataFrame split
-    splitted_data::Tuple
-    function DataSplitter(xs, narray, ndata, sb::Bool, seed, test_size::Int)
-        if sb == true
-            seed != nothing && Random.seed!(seed)
-            narray = shuffle(narray)
+    indices::Array{Int64, 1}
+    function DataSplitter(ndata; test_size=nothing, train_size=nothing)
+        test_size == train_size == nothing && throw(ArgumentError("test_size and train_size wasn't specified. you must specify either one."))
+        if test_size == nothing
+            #number of train data is ceiled
+            test_size = (0<=train_size<=1) ? ndata-ceil(train_size*ndata) : ndata-train_size
+        else
+            test_size = (0<=test_size<=1) ? ndata-ceil((1-test_size)*ndata) : test_size
         end
-        narray = (narray[1:test_size-1], narray[test_size:end])
-        splitted_data = []
-        for x in xs
-            push!(splitted_data, index2element(x, narray))
-        end
-        new(Tuple(splitted_data))
+        new(sample(1:ndata, Int(test_size)))
     end
 end
 
-function index2element(x, index::Tuple)
-    tr, te = index
-    if ndims(x) == 1
-        return ([x[i] for i in tr], [x[i] for i in te])
-    else
-        return ([x[i, :] for i in tr], [x[i, :] for i in te])
-    end
-end
-
-#ndata is dims = 1
-function split_data(x...; sb = true, train_size = nothing, test_size = nothing, seed = nothing)
-    x = collect(x)
-    ndata = size(x[1])[1]
-    narray = collect(1 : 1 : ndata)
-    test_size == train_size == nothing && throw(ArgumentError("test_size and train_size wasn't specified. you must specify either one."))
-    if test_size == nothing
-        #number of train data is ceiled
-        test_size = (0<=train_size<=1) ? ndata-ceil(train_size*ndata) : ndata-train_size
-    else
-        test_size = (0<=test_size<=1) ? ndata-ceil(train_size*ndata) : ndata-train_size
-    end
-    return DataSplitter(x, narray, ndata, sb, seed, Int(test_size)).splitted_data
+function (DS::DataSplitter)(xs; dims=1)
+    index = fill!(Array{Union{Colon, Array{Int64, 1}}}(undef, ndims(xs)), :)
+    index[dims] = DS.indices
+    return xs[index...]
 end

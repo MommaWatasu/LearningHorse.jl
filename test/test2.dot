@@ -14,51 +14,51 @@ fillcolor = "#ffffff"
 node1 [
 label = "X[1]<3.05
 samples=150
-value=[48, 55, 47]"
+value=[50, 51, 49]"
 ];
 node2 [
-label = "X[1]<5.5
+label = "X[1]<3.35
 samples=150
-value=[48, 44, 58]"
+value=[52, 50, 48]"
 ];
 node3 [
 label = "X[1]<5.5
 samples=150
-value=[47, 46, 57]"
+value=[41, 50, 59]"
 ];
 node4 [
-label = "X[1]<5.449999999999999
+label = "X[1]<3.45
 samples=150
-value=[38, 61, 51]"
+value=[47, 46, 57]"
 ];
 node5 [
-label = "X[1]<5.55
+label = "X[1]<3.35
 samples=150
-value=[57, 47, 46]"
+value=[54, 62, 34]"
 ];
 node6 [
-label = "X[1]<5.75
-samples=150
-value=[49, 54, 47]"
-];
-node7 [
 label = "X[1]<5.55
 samples=150
-value=[39, 50, 61]"
+value=[53, 46, 51]"
+];
+node7 [
+label = "X[1]<3.45
+samples=150
+value=[53, 37, 60]"
 ];
 node8 [
-label = "X[1]<3.15
+label = "X[1]<5.55
 samples=150
-value=[56, 55, 39]"
+value=[49, 64, 37]"
 ];
 node9 [
-label = "X[1]<5.5
-samples=150
-value=[38, 59, 53]"
-];
-node10 [
 label = "X[1]<3.1
 samples=150
-value=[56, 50, 44]"
+value=[41, 52, 57]"
+];
+node10 [
+label = "X[1]<5.5
+samples=150
+value=[44, 46, 60]"
 ];
 }
