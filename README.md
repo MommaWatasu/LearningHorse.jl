@@ -10,12 +10,12 @@ LearningHorse is machine learning library for JuliaLang. You can use various alg
 
 ## Resources
 - Documentation:[LearningHorse docs](https://qgmw22.github.io/LearningHorse.jl/docs)
-- Souce code:[LearningHorse.jl (This repositry)](https://github.com/QGMW22/Learninghorse.jl)
+- Source code:[LearningHorse.jl (This repositry)](https://github.com/QGMW22/Learninghorse.jl)
 
 ## Installation
 From the Julia REPL, type ] to enter the Pkg REPL mode and run.
 ```@example
-pkg > add LearningHorse
+pkg> add LearningHorse
 ```
 
 ## Abstract

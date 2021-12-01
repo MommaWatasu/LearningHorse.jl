@@ -11,12 +11,15 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Manual" => [
-            "Regression" => "Regression.md",
-            "Classification" => "Classification.md",
-            "Preprocessing" => "Preprocessing.md",
-            "LossFunction" => "LossFunction.md",
-            "NeuralNetwork" => "NeuralNetwork.md",
+            "Regression" => "Manual/Regression.md",
+            "Classification" => "Manual/Classification.md",
+            "Preprocessing" => "Manual/Preprocessing.md",
+            "LossFunction" => "Manual/LossFunction.md",
+            "NeuralNetwork" => "Manual/NeuralNetwork.md",
         ],
-        "日本語版マニュアル" => "Japanese.md"
+        "Tutorial" => [
+            "Welcome to LearningHorse" => "Tutorial/Welcome.md",
+            "Getting Started" => "Tutorial/Getting_Started.md"
+        ]
     ]
 )
