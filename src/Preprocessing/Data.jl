@@ -4,11 +4,11 @@ Load a data for Machine Learning. `name` is either the name of the datasets or t
 - `MNIST` : The MNIST Datasets
 - `iris` : The iris Datasets
 - `BostonHousing` : Boston Housing DataSets
-And these datasets are downloaded and saved by creating a `dir` folder under the home directly(i.e. it is saved in the `{homedirectly}/learninghorsedatasets` by default).
+And these datasets are downloaded and saved by creating a `dir` folder under the home directly(i.e. it is saved in the `/home_directory/learninghorsedatasets` by default).
 When importing a data file, you can specify whether to read the header with `header`.
 
 # Example
-```repl
+```@repl
 julia> dataloader("MNIST");
 
 julia> dataloader("/home/ubuntu/data/data.csv", header = false)

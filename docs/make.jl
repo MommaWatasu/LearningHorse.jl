@@ -20,6 +20,8 @@ makedocs(;
         "Tutorial" => [
             "Welcome to LearningHorse" => "Tutorial/Welcome.md",
             "Getting Started" => "Tutorial/Getting_Started.md",
+            "Preprocessing" => "Tutorial/Preprocessing.md",
+            "Classifiers" => "Tutorial/Classifiers.md"
         ],
     ]
 )
