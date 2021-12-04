@@ -22,7 +22,8 @@ makedocs(;
             "Getting Started" => "Tutorial/Getting_Started.md",
             "Preprocessing" => "Tutorial/Preprocessing.md",
             "Classifiers" => "Tutorial/Classifiers.md",
-            "Tree" => "Tutorial/Tree.md"
+            "Tree" => "Tutorial/Tree.md",
+            "NeuralNetwork" => "Tutorial/NeuralNetwork.md"
         ],
     ]
 )
