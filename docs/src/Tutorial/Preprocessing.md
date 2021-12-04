@@ -14,7 +14,7 @@ Can I download the mnist_train.csv(110MB)? (y/n)
 ```
 
 !!! note
-    The data downloaded here is in `/home_directory/learningdatasets/` by default. for more details, see [`make_design_matrix`](@ref).
+    The data downloaded here is in `/home_directory/learningdatasets/` by default. for more details, see [`dataloader`](@ref).
 
 Let's also read the local data. 
 ```
@@ -27,17 +27,30 @@ df = dataloader("train.csv", header = false)
 ```
 
 ## Data Preprocessing
-Even if you use the data as it is, you won't be able to make a model with high accuracy, let's normalizethe data.
+
+### Normalization
+Even if you use the data as it is, you won't be able to make a model with high accuracy, let's normalize the data.
 The following three scalers are available in LearningHorse:
-- Standard Scaler : ``z_{i} = \\frac{x_{i}-\\mu}{\\sigma}``
-- MinMax Scaler : ``\\tilde{\\boldsymbol{x}} = \\frac{\\boldsymbol{x}-min(\\boldsymbol{x})}{max(\\boldsymbol{x})-min(\\boldsymbol{x})}``
-- Robust Scaler : ``\\tilde{\\boldsymbol{x}} = \\frac{\\boldsymbol{x}-Q2}{Q3 - Q1}``
+- Standard Scaler : ``\tilde{\boldsymbol{x}} = \frac{x_{i}-\mu}{\sigma}``
+- MinMax Scaler : ``\tilde{\boldsymbol{x}} = \frac{\boldsymbol{x}-min(\boldsymbol{x})}{max(\boldsymbol{x})-min(\boldsymbol{x})}``
+- Robust Scaler : ``\tilde{\boldsymbol{x}} = \frac{\boldsymbol{x}-Q2}{Q3 - Q1}``
 For example, if you normalize iris data set with Standard Scaler,
 ```
 using LearningHorse.Preprocessing: fit!
-train_data = Matrix(dataloader("iris"))[1:4]
+data = Matrix(dataloader("iris"))
+x, t = data[:, 1:4], data[:, 5]
 
 scaler = Standard()
-fit_transform!(scaler, train_data)
+x = fit_transform!(scaler, x)
 ```
 Once the scaler is fittted, sclaes using the same value unless it fits again.
+
+### Data Spliting
+Data division is done by [`DataSplitter`](@ref).
+```
+DS = DataSplitter(150, test_size = 0.3)
+
+train_x, test_x = DS(x)
+train_t, test_t = DS(t)
+```
+You can specify `test_size` and `train_size`, whether it's the number of data or the percentage.

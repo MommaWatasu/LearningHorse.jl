@@ -1,7 +1,7 @@
 """
     Standard()
 Standard Scaler. This scaler scale data as:
-``z_{i} = \\frac{x_{i}-\\mu}{\\sigma}``
+``\tilde{\boldsymbol{x}} = \\frac{x_{i}-\\mu}{\\sigma}``
 
 # Example
 ```jldoctest preprocessing

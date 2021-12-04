@@ -1,13 +1,10 @@
 function bootstrap(x, t, n_trees)
     n_features = size(x)[2]
     n_features_forest = Int(floor(sqrt(n_features)))
-    bootstrapped_x = zeros((length(t), n_features_forest, n_trees))
-    bootstrapped_t = zeros(Int, n_trees, length(t))
-    using_feature = zeros(Int, n_trees, n_features_forest)
+    bootstrapped_x = Array{Float64}(undef, length(t), n_features_forest, n_trees)
+    bootstrapped_t = Array{Any}(undef, n_trees, length(t))
+    using_feature = Array{Int}(undef, n_trees, n_features_forest)
     newaxis = [CartesianIndex()]
-    global bootstrapped_x
-    global bootstrapped_t
-    global using_feature
     for i in 1 : n_trees
         ind = rand(1:length(t), length(t))
         col = sample(1 : n_features, n_features_forest)
@@ -70,8 +67,8 @@ end
 
 function predict(model::RandomForest, x)
     solution = Array{Any}(undef, model.n_trees, size(x, 1))
-    for (tree, feature, i) in zip(model.forest, model.using_feature, 1:model.n_trees)
-        solution[i, :] = predict(tree, x[:, feature])
+    for (tree, feature, i) in zip(model.forest, 1:size(model.using_feature, 1), 1:model.n_trees)
+        solution[i, :] = predict(tree, x[:, model.using_feature[feature, :]])
     end
     predicts = Array{Any}(undef, size(x, 1))
     for i in 1:size(x, 1)

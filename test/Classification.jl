@@ -1,31 +1,30 @@
+using LearningHorse.Preprocessing
 using LearningHorse.Classification
 using LearningHorse.Tree
 using CSV
 import DataFrames
 
 @testset "Classification" begin
-    #Read test datas
-    x = Matrix(CSV.read("./Classification_1.csv", DataFrames.DataFrame, header = false))
-    t = Matrix(CSV.read("./Classification_2.csv", DataFrames.DataFrame, header = false))
+    data = Matrix(dataloader("iris"))
+    x, t = data[:, 1:4], data[:, 5]
     
-    tt = dropdims(t', dims = 2)
     #The test for Decision Tree
     model = DecisionTree()
-    @test_nowarn Tree.fit!(model, x, tt)
+    @test_nowarn Tree.fit!(model, x, t)
     @test_nowarn Tree.predict(model, x)
-    @test_nowarn MV("./test.dot", model)
+    @test_nowarn MV("test.dot", model)
     
     #The test for Random forest
     model = RandomForest(10)
-    @test_nowarn Tree.fit!(model, x, tt)
+    @test_nowarn Tree.fit!(model, x, t)
     @test_nowarn Tree.predict(model, x)
-    @test_nowarn MV("./test2.dot", model)
+    @test_nowarn MV("test2.dot", model)
     
     #The test for Encoders
-    label = ["Apple", "Apple", "Pear", "Pear", "Lemon", "Apple", "Pear", "Lemon"]
     LE = LabelEncoder()
     OHE = OneHotEncoder()
-    @test_nowarn LE(label)
+    @test_nowarn LE(t)
+    t = LE(t)
     @test_nowarn OHE(t)
     t = OHE(t)
     

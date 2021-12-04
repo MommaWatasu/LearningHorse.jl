@@ -65,13 +65,19 @@ julia> x = rand(20, 2);
 
 julia> DS = DataSplitter(50, train_size = 0.3);
 
-julia> DS(x, dims = 2) |> size
+julia> train, test = DS(x, dims = 2);
+
+julia> train |> size
+(6, 2)
+
+julia> test |> size
 (14, 2)
 ```
 """
 struct DataSplitter
     #TODO: make it possible to DataFrame split
-    indices::Array{Int64, 1}
+    test_indices::Array{Int64, 1}
+    train_indices::Array{Int64, 1}
     function DataSplitter(ndata; test_size=nothing, train_size=nothing)
         test_size == train_size == nothing && throw(ArgumentError("test_size and train_size wasn't specified. you must specify either one."))
         if test_size == nothing
@@ -80,12 +86,14 @@ struct DataSplitter
         else
             test_size = (0<=test_size<=1) ? ndata-ceil((1-test_size)*ndata) : test_size
         end
-        new(sample(1:ndata, Int(test_size)))
+        new(sample(1:ndata, Int(test_size), nc=true)...)
     end
 end
 
 function (DS::DataSplitter)(xs; dims=1)
-    index = fill!(Array{Union{Colon, Array{Int64, 1}}}(undef, ndims(xs)), :)
-    index[dims] = DS.indices
-    return xs[index...]
+    test_index = fill!(Array{Union{Colon, Array{Int64, 1}}}(undef, ndims(xs)), :)
+    train_index = fill!(Array{Union{Colon, Array{Int64, 1}}}(undef, ndims(xs)), :)
+    train_index[dims] = DS.train_indices
+    test_index[dims] = DS.test_indices
+    return xs[train_index...], xs[test_index...]
 end
