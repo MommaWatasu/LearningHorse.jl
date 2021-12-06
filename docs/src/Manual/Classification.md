@@ -1,12 +1,5 @@
 # Classification
 
-## Encoders
-
-```@docs
-Classification.LabelEncoder
-Classification.OneHotEncoder
-```
-
 ## Models
 
 ```@docs

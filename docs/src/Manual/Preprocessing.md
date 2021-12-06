@@ -6,6 +6,13 @@ Preprocessing.dataloader
 Preprocessing.DataSplitter
 ```
 
+## Encoders
+
+```@docs
+Preprocessing.LabelEncoder
+Preprocessing.OneHotEncoder
+```
+
 ## Scaler
 ```@docs
 Preprocessing.Standard
