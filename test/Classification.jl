@@ -18,7 +18,8 @@ import DataFrames
     model = RandomForest(10)
     @test_nowarn Tree.fit!(model, x, t)
     @test_nowarn Tree.predict(model, x)
-    @test_nowarn MV("test2.dot", model)
+    paths = ["test$(string(i)).dot" for i in 1 : 10]
+    @test_nowarn MV(paths, model)
     
     #The test for Encoders
     LE = LabelEncoder()

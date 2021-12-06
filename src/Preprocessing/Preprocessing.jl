@@ -1,6 +1,6 @@
 module Preprocessing
 
-export Standard, MinMax, Robust, transform!, fit_transform!, inv_transform!, dataloader, DataSplitter
+export Standard, MinMax, Robust, transform!, fit_transform!, inv_transform!, dataloader, DataSplitter, LabelEncoder, OneHotEncoder
 
 using Statistics
 using Random
@@ -11,6 +11,7 @@ using DataFrames
 include("../utils.jl")
 include("utils.jl")
 include("Data.jl")
+include("Encoder.jl")
 include("MM.jl")
 include("RS.jl")
 include("SS.jl")

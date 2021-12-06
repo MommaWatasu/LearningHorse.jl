@@ -42,13 +42,13 @@ julia> println(predict(model, x))
 Any[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 ```
 """
-mutable struct RandomForest
+mutable struct RandomForest{N}
     α::Float64
     n_trees::Int64
     forest::Array{DecisionTree, 1}
     classes::Array{Array{Any, 1}, 1}
     using_feature::Array{Int64, 2}
-    RandomForest(nt::Int64; alpha::Float64 = 0.01) = new(alpha, nt, Array{DecisionTree}(undef, 0), Array{Array}(undef, 0))
+    RandomForest(nt::Int64; alpha::Float64 = 0.01) = new{nt}(alpha, nt, Array{DecisionTree}(undef, 0), Array{Array}(undef, 0))
 end
 
 function fit!(model::RandomForest, x, t)

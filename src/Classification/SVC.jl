@@ -1,3 +1,5 @@
+include("../Preprocessing/Encoder.jl")
+
 """
     SVC(; alpha=0.01, ni=1000)
 Support Vector Machine Classifier.
