@@ -1,4 +1,4 @@
-function unique(x; count = false)
+function Base.unique(x; count = false)
     s = collect(Set(x))
     if count
         c = zeros(Int, length(s))

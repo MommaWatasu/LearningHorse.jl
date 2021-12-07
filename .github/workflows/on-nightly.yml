@@ -1,4 +1,4 @@
-name: CI-on-latest-julia
+name: CI-on-nightly-julia
 
 on: [push]
 
