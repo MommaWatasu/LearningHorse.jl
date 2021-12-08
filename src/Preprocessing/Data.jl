@@ -18,6 +18,7 @@ function dataloader(name; header = true, dir = "learningdatasets")
     hd = homedir()
     dir = joinpath(hd, dir)
     mkpath(dir)
+    current = pwd()
     cd(dir)
     if name == "MNIST"
         if !(isfile("mnist_train.csv"))
@@ -30,6 +31,7 @@ function dataloader(name; header = true, dir = "learningdatasets")
             yn == "y" && Downloads.download("https://pjreddie.com/media/files/mnist_test.csv", "mnist_test.csv")
         end
         df_e = CSV.read("mnist_test.csv",header = false , DataFrame)
+        cd(current)
         return df_r, df_e
     elseif name == "iris"
         url = "https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv"
@@ -38,6 +40,7 @@ function dataloader(name; header = true, dir = "learningdatasets")
             yn == "y" && Downloads.download(url, "iris.csv")
         end
         df = CSV.read("iris.csv", DataFrame)
+        cd(current)
         return df
     elseif name == "BostonHousing"
         url = "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
@@ -46,9 +49,11 @@ function dataloader(name; header = true, dir = "learningdatasets")
             yn == "y" && Downloads.download(url, "BostonHousing.csv")
         end
         df = CSV.read("BostonHousing.csv", DataFrame)
+        cd(current)
         return df
     end
     df = CSV.read(name, header = header, DataFrame)
+    cd(current)
     return df
 end
 

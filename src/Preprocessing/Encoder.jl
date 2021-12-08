@@ -1,3 +1,5 @@
+using DataFrames
+
 """
     LabelEncoder()
 LabelEncoder structure. `LE(label; count=false, decode=false)` Convert labels(like string) to class numbers(encode), and convert class numbers to labels(decode).
@@ -33,10 +35,10 @@ end
 
 function (LE::LabelEncoder)(data; count = false, decode = false)
     if !decode
-        target = ones(1, length(data))
-        s = [v for v in Set(data)]
+        target = ones(Int64, length(data))
+        s = unique(data)
         if count
-            c = zeros(1, length(s))
+            c = zeros(Int64, length(s))
         end
         for i in 1 : length(data)
             j = findfirst(isequal(data[i]), s)
@@ -149,22 +151,36 @@ julia> OHE(ct, decode = true)
  3
 ```
 """
-mutable struct OneHotEncoder end
+struct OneHotEncoder end
 
-function (OHE::OneHotEncoder)(data; decode = false)
+function (OHE::OneHotEncoder)(data::AbstractVector{T}; decode::Bool=false) where {T}
     if !decode
-        try
-            data = Int.(data)
-        catch
-            throw(ArgumentError("the array of objective variables you passed has a non-zero decimal point in the name of the class (as in 1.1). you must change it to integer type."))
-        end
+        data = Int.(data)
         0 in data && @. data+=1
-        OH = zeros(length(data), maximum(data))
-        for (i, d) in zip(1:length(data), data)
-            OH[i, d] = 1.0
+        unqs = unique(data)
+        out = zeros(Int64, length(data), length(unqs))
+        for (i, unq) in enumerate(unqs)
+            out[findall(isequal(unq), data), i] .= 1
         end
-        return OH
+        return out
     else
-        return [argmax(data[i, :]) for i in 1 : size(data, 1)]
+        return [argmax(data[i], dims=2) for i in 1 : size(data, 1)]
     end
+end
+
+function (OHE::OneHotEncoder)(df::DataFrame, cols::Vector{T} ) where T
+    out = deepcopy(df)
+    for col in cols
+        if typeof(col) == Int
+            prifex = names(df)[col]
+        elseif typeof(col) == Symbol
+            prifex = string(col)
+        else
+            prifex = col
+        end
+        data = out[!,col]
+        out = select(out, Not([col]))
+        out = hcat(out, OHE(data, prifex=prifex))
+    end
+    return out
 end
