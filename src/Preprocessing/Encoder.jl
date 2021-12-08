@@ -33,32 +33,31 @@ mutable struct LabelEncoder
     LabelEncoder() = new(Dict())
 end
 
-function (LE::LabelEncoder)(data; count = false, decode = false)
-    if !decode
-        target = ones(Int64, length(data))
-        s = unique(data)
-        if count
-            c = zeros(Int64, length(s))
-        end
-        for i in 1 : length(data)
-            j = findfirst(isequal(data[i]), s)
-            target[i] = j
-            if count
-                c[j]+=1
-            end
-        end
-        d = Dict()
-        for i in 1 : length(s)
-            d[i] = s[i]
-        end
-        LE.d = d
-        if count
-            return target, c
-        end
-        return target
-    else
+function (LE::LabelEncoder)(data; count::Bool=false, decode::Bool=false)
+    if decode
         return map(x->LE.d[x], data)
     end
+    target = ones(Int64, length(data))
+    s = unique(data)
+    if count
+        c = zeros(Int64, length(s))
+    end
+    for i in 1 : length(data)
+        j = findfirst(isequal(data[i]), s)
+        target[i] = j
+        if count
+            c[j]+=1
+        end
+    end
+    d = Dict()
+    for i in 1 : length(s)
+        d[i] = s[i]
+    end
+    LE.d = d
+    if count
+        return target, c
+    end
+    return target
 end
 
 """
@@ -168,19 +167,34 @@ function (OHE::OneHotEncoder)(data::AbstractVector{T}; decode::Bool=false) where
     end
 end
 
+function dataframe_ohe(data::AbstractVector{T}; prifex::String="") where {T}
+    if !isempty(prifex)
+        prifex *= "_"
+    else
+        prifex = "OHE_"
+    end
+    unqs = unique(data)
+    out = DataFrame(Dict([string(prifex,unq)=>zeros(length(data)) for unq in unqs]...))
+    for (ind, k) in enumerate(unqs)
+        out[findall(isequal(k), data),ind] .= 1
+    end
+    return out
+end
+
 function (OHE::OneHotEncoder)(df::DataFrame, cols::Vector{T} ) where T
     out = deepcopy(df)
     for col in cols
-        if typeof(col) == Int
+        if T == Int
             prifex = names(df)[col]
-        elseif typeof(col) == Symbol
+        elseif T == Symbol
             prifex = string(col)
         else
             prifex = col
         end
         data = out[!,col]
         out = select(out, Not([col]))
-        out = hcat(out, OHE(data, prifex=prifex))
+        println(typeof(data), typeof(prifex))
+        out = hcat(out, dataframe_ohe(data, prifex=prifex))
     end
     return out
 end

@@ -52,9 +52,12 @@ function dataloader(name; header = true, dir = "learningdatasets")
         cd(current)
         return df
     end
-    df = CSV.read(name, header = header, DataFrame)
-    cd(current)
-    return df
+    try
+        df = CSV.read(name, header=header, DataFrame)
+        return df
+    finally
+        cd(current)
+    end
 end
 
 """
