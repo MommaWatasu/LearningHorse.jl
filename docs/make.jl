@@ -29,5 +29,5 @@ makedocs(;
 )
 
 deploydocs(
-    repo = "github.com/mommawatasu/LearningHorse.jl.git",
+    repo = "github.com/MommaWatasu/LearningHorse.jl.git",
 )
