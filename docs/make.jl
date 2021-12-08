@@ -27,3 +27,7 @@ makedocs(;
         ],
     ]
 )
+
+deploydocs(
+    repo = "github.com/mommawatasu/LearningHorse.jl.git",
+)

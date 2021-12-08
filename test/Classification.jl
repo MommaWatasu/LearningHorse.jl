@@ -21,12 +21,9 @@ import DataFrames
     paths = ["test$(string(i)).dot" for i in 1 : 10]
     @test_nowarn MV(paths, model)
     
-    #The test for Encoders
     LE = LabelEncoder()
     OHE = OneHotEncoder()
-    @test_nowarn LE(t)
     t = LE(t)
-    @test_nowarn OHE(t)
     t = OHE(t)
     
     #The test for Logistic Regression
