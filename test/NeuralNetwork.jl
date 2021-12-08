@@ -1,6 +1,14 @@
 using LearningHorse.NeuralNetwork
 
 @testset "NeuralNetwork" begin
+    #Test for utils
+    @test_nowarn Dense(10=>5, relu, set_w="He")
+    @test_nowarn Dense(10=>5, relu, set_w=rand)
+    @test_throws ArgumentError Dense(10=>5, relu, set_w=length)
+    @test_nowarn Conv((2, 2), 2=>1, relu, set_w="He")
+    @test_throws ArgumentError Conv((2, 2), 2=>1, relu, set_w=rand)
+    @test_nowarn Conv((2, 2), 2=>1, relu, padding=KeepSize())
+    
     #Test for activations
     data = [(rand(Float64, 10), rand(Float64)) for i in 1 : 10]
     loss = LossFunction.mse
@@ -16,6 +24,7 @@ using LearningHorse.NeuralNetwork
     for opt in [Descent(), Momentum(), AdaGrad(), Adam()]
         NN = NetWork(Dense(10=>5, relu), Dense(5=>1, tanh))
         @test_nowarn train!(NN, loss, data, opt)
+        @test_nowarn NN(rand(10))
     end
     
     #Test for Conv, Pooling, Flatten, Dropout

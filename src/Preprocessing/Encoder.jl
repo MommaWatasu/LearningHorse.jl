@@ -193,7 +193,6 @@ function (OHE::OneHotEncoder)(df::DataFrame, cols::Vector{T} ) where T
         end
         data = out[!,col]
         out = select(out, Not([col]))
-        println(typeof(data), typeof(prifex))
         out = hcat(out, dataframe_ohe(data, prifex=prifex))
     end
     return out

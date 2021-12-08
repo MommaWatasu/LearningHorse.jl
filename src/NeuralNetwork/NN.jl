@@ -17,7 +17,7 @@ for f in ACTIVATIONS
     @eval export $(f)
 end
 
-export NetWork, Dense, Conv, Flatten, Dropout, MaxPool, add_layer!, train!, @epochs, params
+export NetWork, Dense, Conv, Flatten, Dropout, MaxPool, add_layer!, train!, @epochs, params, KeepSize
 
 include("utils.jl")
 include("Layers/Network.jl")
