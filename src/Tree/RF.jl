@@ -72,7 +72,7 @@ function predict(model::RandomForest, x)
     end
     predicts = Array{Any}(undef, size(x, 1))
     for i in 1:size(x, 1)
-        class, counts = unique(solution[:, i], count = true)
+        class, counts = count_unique(solution[:, i])
         predicts[i] = class[argmax(counts)]
     end
     return predicts

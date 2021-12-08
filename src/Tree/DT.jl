@@ -1,13 +1,10 @@
-function Base.unique(x; count = false)
-    s = collect(Set(x))
-    if count
-        c = zeros(Int, length(s))
-        for i in 1:length(x)
-            c[findfirst(isequal(x[i]), s)]+=1
-        end
-        return s, Int.(c)
+function count_unique(x)
+    u = unique(x)
+    c = Array{Int64}(undef, length(u))
+    for i in 1 : length(u)
+        c[i] = length(findall(isequal(u[i]), x))
     end
-    return s
+    return u, c
 end
 
 function get_branching_shold(xs)
@@ -18,10 +15,10 @@ end
 function delta_gini_index(left, right, alpha, branch_count)
     n_left, n_right = length(left), length(right)
     n_total = n_left + n_right
-    _, counts = unique(left, count = true)
+    _, counts = count_unique(left)
     ratio_classes = counts / n_left
     left_gain = (n_left/n_total) * (1-sum(ratio_classes.^2))
-    _, counts = unique(right, count = true)
+    _, counts = count_unique(right)
     ratio_classes = counts / n_right
     right_gain = (n_right/n_total) * (1-sum(ratio_classes.^2))
     return left_gain+right_gain+alpha*branch_count
@@ -57,7 +54,7 @@ end
 
 function grow(x, t, classes, gini, alpha, branch_count)
     check_size(x, t)
-    uniques, counts = unique(t, count = true)
+    uniques, counts = count_unique(t)
     counter = Dict(zip(uniques, counts))
     class_count = [(c in keys(counter)) ? counter[c] : 0 for c in classes]
     this = Dict("class_count" => class_count, "feature_id" => nothing, "threshold" => nothing, "left" => nothing, "right" => nothing)
