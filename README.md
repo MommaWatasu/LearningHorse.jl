@@ -4,7 +4,7 @@
 
 |GitHub Actions|Coveralls|CodeCov|
 |:------------:|:-----:|:------:|
-|[![CI](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml/badge.svg)](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/main.yml) [![CI-on-latest-julia](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/on-nightly.yml/badge.svg)](https://github.com/QGMW22/LearningHorse.jl/actions/workflows/on-nightly.yml)|[![Coverage Status](http://coveralls.io/repos/github/QGMW22/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/QGMW22/LearningHorse.jl?branch=master)|[![codecov](https://codecov.io/gh/MommaWatasu/LearningHorse.jl/branch/master/graph/badge.svg?token=x7YKbXMjPE)](https://codecov.io/gh/MommaWatasu/LearningHorse.jl)|
+|[![CI](https://github.com/MommaWatasu/LearningHorse.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/MommaWatasu/LearningHorse.jl/actions/workflows/CI.yml) [![CI-on-nightly-julia](https://github.com/MommaWatasu/LearningHorse.jl/actions/workflows/on-nightly.yml/badge.svg)](https://github.com/MommaWatasu/LearningHorse.jl/actions/workflows/on-nightly.yml)|[![Coverage Status](https://coveralls.io/repos/github/MommaWatasu/LearningHorse.jl/badge.svg?branch=master)](https://coveralls.io/github/MommaWatasu/LearningHorse.jl?branch=master)|[![codecov](https://codecov.io/gh/MommaWatasu/LearningHorse.jl/branch/master/graph/badge.svg?token=x7YKbXMjPE)](https://codecov.io/gh/MommaWatasu/LearningHorse.jl)|
 
 LearningHorse is machine learning library for JuliaLang. You can use various algorithms, from basic algorithms such as linear regression to neuralnetwork.
 

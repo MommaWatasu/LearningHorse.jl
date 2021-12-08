@@ -3,8 +3,8 @@
 LearningHorse provides an easy-to-use machine learning library
 
 ## Resources
-- [Documentation](https://qgmw22.github.io/LearningHorse.jl/docs/)
-- [Source code](https://github.com/QGMW22/Learninghorse.jl)
+- [Documentation](https://mommawatasu.github.io/LearningHorse.jl/docs/)
+- [Source code](https://github.com/MommaWatasu/Learninghorse.jl)
 
 ## Installation
 LearningHorse can be installed using the Julia package manager.
