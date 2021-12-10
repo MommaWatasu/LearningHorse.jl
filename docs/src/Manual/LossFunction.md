@@ -12,7 +12,7 @@ LossFunction.mse
 LossFunction.cee
 LossFunction.mae
 LossFunction.huber
-LossFunction.logcosh
+LossFunction.logcosh_loss
 LossFunction.poisson
 LossFunction.hinge
 LossFunction.smooth_hinge

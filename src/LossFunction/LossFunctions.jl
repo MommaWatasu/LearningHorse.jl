@@ -4,7 +4,7 @@ using LinearAlgebra
 using Statistics
 
 LOSSES = [
-    :mse, :cee, :mae, :huber, :logcosh, :poisson, :hinge, :smooth_hinge
+    :mse, :cee, :mae, :huber, :logcosh_loss, :poisson, :hinge, :smooth_hinge
 ]
 
 for f in LOSSES
@@ -108,13 +108,13 @@ end
 huber(y::Number, t::Number; δ=1) = ifelse(abs(t-y)<=δ, abs(t-y)^2/2, (abs(t-y)-δ/2)δ)
 
 @doc raw"""
-    logcosh(y, t; reduction="mean")
+    logcosh_loss(y, t; reduction="mean")
 Log Cosh. Basically, it's [`MAE`](@ref), but if the loss is small, it will be close to [`MSE`](@ref). This is the expression:
 ```math
 Logcosh(y, t) = \log(\cosh(t_{i}-y_{i}))
 ```
 """
-function logcosh(y::AbstractVector, t::AbstractVector; reduction::String="mean")
+function logcosh_loss(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = @. log(cosh(t-y))
     if reduction=="none"
         return loss
@@ -127,7 +127,7 @@ function logcosh(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     end
 end
 
-logcosh(y::Number, t::Number) = log(cosh(t-y))
+logcosh_loss(y::Number, t::Number) = log(cosh(t-y))
 
 @doc raw"""
     Poisson(y, t; reduction="mean")
@@ -221,17 +221,14 @@ end
 
 #TODO:Consider whether to implement Calback liverer information volume
 
-#For Vector and Number
 for lossfunc in LOSSES
+    #For Vector and Number
     @eval begin
         function $(lossfunc)(y::AbstractVector{T}, t::Number; reduction::String="mean") where {T}
             $(lossfunc)(y, fill(t, length(y)), reduction=reduction)
         end
     end
-end
-
-#For Matrix and Number
-for lossfunc in LOSSES
+    #For Matrix and Number
     @eval begin
         function $(lossfunc)(y::AbstractMatrix{T}, t::Number; reduction::String="mean") where {T}
             if length(y) == 1

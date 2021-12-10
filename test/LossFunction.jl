@@ -6,7 +6,7 @@ using LearningHorse.LossFunction
     my1, my2, my3 = fill!(Array{Float64}(undef, 1, 1), sy), rand(20, 1), rand(20, 2)
     
     LOSSES = [
-        mse, cee, mae, huber, logcosh, poisson, hinge, smooth_hinge
+        mse, cee, mae, huber, logcosh_loss, poisson, hinge, smooth_hinge
     ]
     
     for f in LOSSES
