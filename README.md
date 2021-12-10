@@ -4,7 +4,7 @@
 
 |GitHub Actions|Coveralls|CodeCov|Docs|
 |:------------:|:-----:|:------:|:--------:|
-|[![CI][CI-img]](CI-url) [![CI-on-nightly-julia][on-nightly-img]](on-nightly-url)|[![Coverage Status][coveralls-img]][coveralls-url]|[![codecov][codecov-img]][codecov-url]|[![docs dev][docs-dev-img]][docs-dev-url] [![docs stable][docs-stable-img]][docs-stable-url]|
+|[![CI][CI-img]][CI-url] [![CI-on-nightly-julia][on-nightly-img]][on-nightly-url]|[![Coverage Status][coveralls-img]][coveralls-url]|[![codecov][codecov-img]][codecov-url]|[![docs dev][docs-dev-img]][docs-dev-url] [![docs stable][docs-stable-img]][docs-stable-url]|
 
 LearningHorse is machine learning library for JuliaLang. You can use various algorithms, from basic algorithms such as linear regression to neuralnetwork.
 

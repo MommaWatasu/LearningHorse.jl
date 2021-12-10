@@ -13,7 +13,7 @@ end
 
 safe_log(x, miniv = 1e-8) = map(log, clamp.(x, miniv, Inf))
 
-@docs raw"""
+@doc raw"""
     mse(y, t; reduction="mean")
 Mean Square Error. This is the expression:
 ```math
@@ -22,18 +22,19 @@ MSE(y, t) = \frac{\sum_{i=1}^{n} (t_{i}-y_{i})^{2}}{n}
 """
 function mse(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = (y.-t).^2
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
+mse(y::Number, t::Number) = (y-t)^2
 
-@docs raw"""
+@doc raw"""
     cee(y, t; reduction="mean")
 Cross Entropy Error. This is the expression:
 ```math
@@ -41,39 +42,43 @@ CEE(y, t) = \frac{\sum_{i=1}^{n} t\ln y}{n}
 ```
 """
 function cee(y::AbstractVector, t::AbstractVector; reduction::String="mean")
-    loss = -sum(t.*safe_log(y))
-    if reduction="none"
+    loss = -t.*safe_log(y)
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+cee(y::Number, t::Number) = -t*safe_log(y)
+
+@doc raw"""
     mae(y, t)
 Mean Absolute Error. This is the expression:
 ```math
 MAE(y, t) = \frac{\sum_{i=1}^{n} |t_{i}-y_{i}|}{n}
 ```
 """
-function mae(y::AbstractVector, t::AbstractVector; reduction::String="none")
+function mae(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = abs.(t-y)
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+mae(y::Number, t::Number) = abs(t-y)
+
+@doc raw"""
     huber(y, t; δ=1, reduction="mean")
 Huber-Loss. If `δ` is large, it will be a function like [`MSE`](@ref), and if it is small, it will be a function like [`MAE`](@ref). This is the expression:
 ```math
@@ -86,21 +91,23 @@ Huber(y, t) = \left\{
 \right.
 ```
 """
-function huber(y::AbstractVector, t::AbstractVector; δ=1, reduction::String="none")
+function huber(y::AbstractVector, t::AbstractVector; reduction::String="mean", δ=1)
     a = abs.(t-y)
     loss = @. ifelse(a<=δ, a^2/2, (a-δ/2)δ)
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+huber(y::Number, t::Number; δ=1) = ifelse(abs(t-y)<=δ, abs(t-y)^2/2, (abs(t-y)-δ/2)δ)
+
+@doc raw"""
     logcosh(y, t; reduction="mean")
 Log Cosh. Basically, it's [`MAE`](@ref), but if the loss is small, it will be close to [`MSE`](@ref). This is the expression:
 ```math
@@ -109,18 +116,20 @@ Logcosh(y, t) = \log(\cosh(t_{i}-y_{i}))
 """
 function logcosh(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = @. log(cosh(t-y))
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+logcosh(y::Number, t::Number) = log(cosh(t-y))
+
+@doc raw"""
     Poisson(y, t; reduction="mean")
 Poisson Loss, Distribution of predicted value and loss of Poisson distribution. This is the expression:
 ```math
@@ -129,18 +138,20 @@ Poisson(y, t) = \frac{\sum_{i=1}^{n} y_{i}-t_{i} \ln y}{n}
 """
 function poisson(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = @. y - t*log(y)
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+poisson(y::Number, t::Number) = y - t*log(y)
+
+@doc raw"""
     hinge(y, t; reduction="mean")
 Hinge Loss, for SVM. This is the expression:
 ```math
@@ -149,18 +160,20 @@ Hinge(y, t) = \frac{\sum_{i=1}^{n} \max(1-y_{i}t_{i}, 0)}{n}
 """
 function hinge(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     loss = @. max(1-y*t, 0)
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
-@docs raw"""
+hinge(y::Number, t::Number) = max(1-y*t, 0)
+
+@doc raw"""
     smooth_hinge(y, t; reduction="mean")
 Smoothing Hinge Loss. This is the expression:
 ```math
@@ -173,7 +186,7 @@ smoothHinge(y, t) = \frac{1}{n} \sum_{i=1}^{n} \left\{
 \right.
 ```
 """
-function smooth_hinge(y::AbstractVector{T}, t::AbstractVector; reduction::String="mean") where {T}
+function smooth_hinge(y::AbstractVector, t::AbstractVector; reduction::String="mean")
     z = t.*y
     loss = similar(z)
     for i in 1 : length(y)
@@ -185,23 +198,49 @@ function smooth_hinge(y::AbstractVector{T}, t::AbstractVector; reduction::String
             loss[i] = 1/2-z[i]
         end
     end
-    if reduction="none"
+    if reduction=="none"
         return loss
-    elseif reduction="sum"
+    elseif reduction=="sum"
         return sum(loss)
-    elseif reduction="mean"
+    elseif reduction=="mean"
         return mean(loss)
     else
         throw(ArgumentError("`reduction` must be either `none`, `sum` or `mean`"))
     end
 end
 
+function smooth_hinge(y::Number, t::Number)
+    if t*y >= 0
+        return 0
+    elseif 0 < t*y < 1
+        return (1-t*y)^2/2
+    else
+        return 1/2-t*y
+    end
+end
+
 #TODO:Consider whether to implement Calback liverer information volume
 
+#For Vector and Number
 for lossfunc in LOSSES
     @eval begin
-        function $(lossfunc)(y::AbstractMatrix{Y}, t::AbstractMatrix{T}) where {Y, T}
-            throw(DimensionMismatch("`y` and `t` must be Vector!"))
+        function $(lossfunc)(y::AbstractVector{T}, t::Number; reduction::String="mean") where {T}
+            $(lossfunc)(y, fill(t, length(y)), reduction=reduction)
+        end
+    end
+end
+
+#For Matrix and Number
+for lossfunc in LOSSES
+    @eval begin
+        function $(lossfunc)(y::AbstractMatrix{T}, t::Number; reduction::String="mean") where {T}
+            if length(y) == 1
+                return $(lossfunc)(y..., t)
+            elseif size(y, 1)==1 || size(y, 2)==1
+                return $(lossfunc)(vec(y), t, reduction=reduction)
+            else
+                throw(DimensionMismatch("LossFunctions don't support for Matrix!"))
+            end
         end
     end
 end

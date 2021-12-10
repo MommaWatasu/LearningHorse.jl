@@ -93,7 +93,7 @@ Dense(10=>5, rrelu(0.001, 0.1))
 """
 struct rrelu
     α::Float64
-    function rrelu(min::Int64, max::Int64)
+    function rrelu(min::Float64, max::Float64)
         new(round(rand()*(max-min+1))+min)
     end
 end
