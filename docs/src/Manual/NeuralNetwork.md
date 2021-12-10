@@ -18,7 +18,7 @@ Dropout
 Flatten
 ```
 ## Activations
-```docs
+```@docs
 σ
 hardσ
 hardtanh
