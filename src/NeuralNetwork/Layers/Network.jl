@@ -17,7 +17,7 @@ NetWork also supports index.
 You can also add layers later using the add_layer!() Function.
 
 # Example
-```
+```jldoctest
 julia> N = NetWork(Dense(10=>5, relu), Dense(5=>1, relu))
 
 julia> N[1]
@@ -69,7 +69,7 @@ Crate a traditinal `Dense` layer, whose forward propagation is given by:
 The input of `x` should be a Vactor of length `in`, (Sorry for you can't learn using batch. I'll implement)
 
 # Example
-```
+```jldoctest
 julia> D = Dense(5=>2, relu)
 Dense(IO:5=>2, σ:relu)
 
@@ -106,7 +106,7 @@ end
 This layer change the dimentions Image to Vector.
 
 # Example
-```
+```jldoctest
 julia> F = Flatten()
 Flatten(())
 
@@ -130,6 +130,7 @@ end
 This layer dropout the input data.
 
 # Example
+```jldoctest
 julia> D = Dropout(0.25)
 Dropout(0.25)
 
@@ -145,6 +146,7 @@ julia> D(rand(10))
  0.0
  0.04581776023870532
  1.2794087133638332
+```
 """
 struct Dropout <: NParam
     p::Float64
@@ -186,6 +188,7 @@ end
 This function add layers to model. You can add layers when you create a NeuralNetwork with `NetWork()`, and you can also use this function to add layers later.
 
 # Example
+```jldoctest
 julia> N = NetWork()
 
 julia> add_layer!(N, Dense(10=>5, relu), Dense(5=>1, relu))
@@ -193,6 +196,7 @@ julia> add_layer!(N, Dense(10=>5, relu), Dense(5=>1, relu))
 julia> N
 Layer1 : Dense(IO:10 => 5, σ:relu)
 Layer2 : Dense(IO:5 => 1, σ:relu)
+```
 """
 function add_layer!(model::NetWork, obj::T) where T <: Layer
     l = length(model.net)

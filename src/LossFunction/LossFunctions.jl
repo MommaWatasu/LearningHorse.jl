@@ -80,7 +80,7 @@ mae(y::Number, t::Number) = abs(t-y)
 
 @doc raw"""
     huber(y, t; δ=1, reduction="mean")
-Huber-Loss. If `δ` is large, it will be a function like [`MSE`](@ref), and if it is small, it will be a function like [`MAE`](@ref). This is the expression:
+Huber-Loss. If `δ` is large, it will be a function like [`mse`](@ref), and if it is small, it will be a function like [`mae`](@ref). This is the expression:
 ```math
 a = |t_{i}-y_{i}| \\
 Huber(y, t) = \left\{
@@ -109,7 +109,7 @@ huber(y::Number, t::Number; δ=1) = ifelse(abs(t-y)<=δ, abs(t-y)^2/2, (abs(t-y)
 
 @doc raw"""
     logcosh_loss(y, t; reduction="mean")
-Log Cosh. Basically, it's [`MAE`](@ref), but if the loss is small, it will be close to [`MSE`](@ref). This is the expression:
+Log Cosh. Basically, it's [`mae`](@ref), but if the loss is small, it will be close to [`mse`](@ref). This is the expression:
 ```math
 Logcosh(y, t) = \log(\cosh(t_{i}-y_{i}))
 ```

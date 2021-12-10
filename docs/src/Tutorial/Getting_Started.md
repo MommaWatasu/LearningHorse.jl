@@ -64,3 +64,21 @@ model = Lasso()
 fit!(model, make_design_matrix(train_data))
 ```
 Predicting is the same as polynomial regression.
+
+## Saveing and Loading
+There's no point in just learning the model you made, you need to save it and load it when you need it.
+LearningHorse itself doesn't implement this function, but it is very easy by using [`BSON.jl`](https://github.com/JuliaIO/BSON.jl).
+after learning:
+```
+using BSON
+using BSON: @save
+
+@save "/home/ubuntu/model.bson" model
+```
+and loading:
+```
+using BSON
+using BSON: @load
+
+@load "/home/ubuntu/model.bson" model
+```
