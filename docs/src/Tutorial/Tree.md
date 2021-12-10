@@ -44,10 +44,14 @@ fit!(model, x, t)
 ```
 Visualization can be done in the same way.
 ```
-MV("/home/ubuntu/Forest.dot", model, rounded = true, bgcolor = "#4aae4a", label = "Forest Model")
+paths = ["/home/ubuntu/tree$i.dot", for i in 1 : 10]
+MV(paths, model, rounded = true, bg = "#4aae4a", label = "Forest Model")
 ```
 ```
-$ dot -Tpng -o /home/ubuntu/Forest.png /home/ubuntu/Forest.dot
+$ dot -Tpng -o /home/ubuntu/tree1.png /home/ubuntu/tree1.dot
+$ dot -Tpng -o /home/ubuntu/tree2.png /home/ubuntu/tree2.dot
+$ dot -Tpng -o /home/ubuntu/tree3.png /home/ubuntu/tree3.dot
+⋮
 ```
 !!! warning
-    A bug has been found in the behavior of RandomForest's visualization. This bug will be fixed soon.
+    This function is broken in LearningHorse v0.3.2

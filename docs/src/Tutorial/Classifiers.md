@@ -6,6 +6,7 @@ In order to convert label-like string data to teacher data that can be used by c
 ### Label Encoder
 First, convert string data to numeric data. At this time, the conversion rules for string data and numeric data are stored in the encoder. Therefore, after the prediction, you can see the prediction results by decoding with the same encoder. for more details, see [`LabelEncoder`](@ref).
 ```
+using LearningHorse.Preprocessing
 using LearningHorse.Classification
 using LearningHorse.Classification: fit!, predict
 

@@ -6,7 +6,7 @@ First, let's load the MNIST data.
 ```
 using LearningHorse.Preprocessing
 
-train_data, test_dara = dataloder("MNIST")
+train_data, test_dara = dataloader("MNIST")
 ```
 If it is your first time to load a data set. you wil be asked if you want to download the data like this:
 ```
@@ -47,6 +47,8 @@ Once the scaler is fittted, sclaes using the same value unless it fits again.
 
 ### Data Spliting
 Data division is done by [`DataSplitter`](@ref).
+!!! warning
+    this function is broken in LearningHorse v0.3.2
 ```
 DS = DataSplitter(150, test_size = 0.3)
 
