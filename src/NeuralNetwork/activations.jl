@@ -159,10 +159,7 @@ gelu(x) = x\sigma(1.702x)
 @inline gelu(x) = σ(1.702*x)x
 
 @doc raw"""
-    selu(x) = λ * (x ≥ 0 ? x : α * (exp(x) - 1))
-    
-    λ = 1.0507009873554804934193349852946
-    α = 1.6732632423543772848170429916717
+    selu(x)
 Scaled exponential linear units. This is the expression
 ```math
 \lambda = 1.0507009873554804934193349852946 \\
@@ -185,7 +182,7 @@ const selu_λ = 1.0507009873554804934193349852946
 const selu_α = 1.6732632423543772848170429916717
 
 @doc raw"""
-    trelu(x; ζ=1)
+    trelu(x; θ=1)
 Threshold gated Rectified Linear Unit. This is the expression:
 ```math
 \theta = 1 \\

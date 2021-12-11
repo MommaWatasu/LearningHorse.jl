@@ -83,10 +83,10 @@ mae(y::Number, t::Number) = abs(t-y)
 Huber-Loss. If `δ` is large, it will be a function like [`mse`](@ref), and if it is small, it will be a function like [`mae`](@ref). This is the expression:
 ```math
 a = |t_{i}-y_{i}| \\
-Huber(y, t) = \left\{
+Huber(y, t) = \frac{1}{n} \sum_{i=1}^{n} \left\{
 \begin{array}{ll}
-\frac{1}{2n}a^{2} & (a \leq \delta) \\
-\frac{1}{n}\delta(a-\frac{1}{2}\delta) & (a \gt \delta)
+\frac{1}{2}a^{2} & (a \leq \delta) \\
+\delta(a-\frac{1}{2}\delta) & (a \gt \delta)
 \end{array}
 \right.
 ```
@@ -111,7 +111,7 @@ huber(y::Number, t::Number; δ=1) = ifelse(abs(t-y)<=δ, abs(t-y)^2/2, (abs(t-y)
     logcosh_loss(y, t; reduction="mean")
 Log Cosh. Basically, it's [`mae`](@ref), but if the loss is small, it will be close to [`mse`](@ref). This is the expression:
 ```math
-Logcosh(y, t) = \log(\cosh(t_{i}-y_{i}))
+Logcosh(y, t) = \frac{\sum_{i=1}^{n} \log(\cosh(t_{i}-y_{i}))}{n}
 ```
 """
 function logcosh_loss(y::AbstractVector, t::AbstractVector; reduction::String="mean")
