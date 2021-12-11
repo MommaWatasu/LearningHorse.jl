@@ -21,7 +21,7 @@ line(x) = x
     σ(x)
 Standard sigmoid activation function. Also, this function can be called with `σ`. This is the expression:
 ```math
-σ(x) = \frac{1}{1+\exp{-x}}
+\sigma(x) = \frac{1}{1+e^{-x}}
 ```
 """
 @inline function sigmoid(x)
@@ -152,7 +152,7 @@ gelu(x) = x\phi(x)
 ```
 However, in the implementation, it is calculated with the following expression.
 ```math
-\sigma(x) = \frac{1}{1+\exp{-x}} \\
+\sigma(x) = \frac{1}{1+e^{-x}} \\
 gelu(x) = x\sigma(1.702x)
 ```
 """
@@ -200,7 +200,7 @@ x & (x \gt 0) \\
     logσ(x)
 logarithmic sigmoid function. This is the expression:
 ```math
-\sigma(x) = \frac{1}{1+\exp{-x}} \\
+\sigma(x) = \frac{1}{1+e^{-x}} \\
 logsigmoid(x) = \log(\sigma(x))
 ```
 """
@@ -288,7 +288,7 @@ mish(x) = x\tanh(softplus(x))
     swish(x; β=1)
 The swish function. This is the expression:
 ```math
-\sigma(x) = \frac{1}{1+\exp{-x}}
+\sigma(x) = \frac{1}{1+e^{-x}}
 swish(x) = x\sigma(\beta x)
 ```
 """

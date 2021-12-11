@@ -71,8 +71,8 @@ end
 
 function fit!(model::LinearRegression, x, t)
     check_size(x, t)
-    x = hcat(x, ones(size(x, 1), 1))
-    model.w = inv(x' * x) * x' * t
+    x = expand(x)
+    model.w = inv(x * x') * x * t
 end
 
-predict(model::LinearRegression, x) = hcat(x, ones(size(x, 1), 1)) * model.w
+(model::LinearRegression)(x) = expand(x)' * model.w

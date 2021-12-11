@@ -13,7 +13,7 @@ julia> fit!(model, x, t)
   2.1185952951687614
  40.334109796666425
 
-julia> predict(model, x)
+julia> model(x)
 20-element Vector{Float64}:
  175.12510514593038
  170.28763505842625
@@ -45,10 +45,10 @@ end
 
 function fit!(model::Ridge, x, t)
     check_size(x, t)
-    x = hcat(x, ones(size(x, 1), 1))
-    n = size(x, 2)
+    x = expand(x)
+    n = size(x, 1)
     _I = Matrix{Float64}(I, n, n)
-    model.w = inv(x' * x .+ model.α * _I) * x' * t
+    model.w = inv(x * x' .+ model.α * _I) * x * t
 end
 
-predict(model::Ridge, x) = hcat(x, ones(size(x, 1), 1)) * model.w
+(model::Ridge)(x) = expand(x)' * model.w

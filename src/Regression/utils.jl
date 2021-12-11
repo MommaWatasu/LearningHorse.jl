@@ -1,6 +1,8 @@
-function check_size(x, y)
-    x_s, y_s = size(x, 1), size(y, 1)
-    if x_s != y_s
-        throw(DimensionMismatch("first dimension of the input data is $x_s, and teaching data is $y_s. these dimensions must match."))
+function check_size(x, t)
+    xs, ts = size(x, 2), length(t)
+    if xs != ts
+        throw(DimensionMismatch("first dimension of the input data is $xs, and teaching data is $ts. these dimensions must match."))
     end
 end
+
+expand(x::AbstractArray) = vcat(x, ones(1, size(x, 2)))
