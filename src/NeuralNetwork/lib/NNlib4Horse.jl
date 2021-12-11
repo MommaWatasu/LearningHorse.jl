@@ -1,6 +1,6 @@
 module NNlib4Horse
 
-include("dims/DimInfo.jl")
+include("DimInfo.jl")
 include("conv.jl")
 
 end
