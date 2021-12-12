@@ -40,7 +40,7 @@ julia> fit!(model, x, t)
   1.395963968616736
  76.7817095600793
 
-julia> predict(model, x)
+julia> model(x)
 20-element Vector{Float64}:
  171.05359766482795
  167.38737053144575
@@ -69,6 +69,10 @@ mutable struct LinearRegression
     LinearRegression() = new(Array{Float64}(undef, 0))
 end
 
+"""
+    fit!(model, x, t)
+`x` must be the number of features in the first dimension and the second dimension must be the number of data.
+"""
 function fit!(model::LinearRegression, x, t)
     check_size(x, t)
     x = expand(x)

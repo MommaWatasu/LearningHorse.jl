@@ -1,5 +1,5 @@
 ACTIVATIONS = [
-    :σ, :hardσ, :hardtanh, :relu,
+    :line, :σ, :hardσ, :hardtanh, :relu,
     :leakyrelu, :relu6, :rrelu, :elu, :gelu, :swish, :selu,
     :celu, :softplus, :softsign, :logσ, :logcosh,
     :mish, :tanhshrink, :softshrink, :trelu, :lisht 
@@ -288,7 +288,7 @@ mish(x) = x\tanh(softplus(x))
     swish(x; β=1)
 The swish function. This is the expression:
 ```math
-\sigma(x) = \frac{1}{1+e^{-x}}
+\sigma(x) = \frac{1}{1+e^{-x}} \\
 swish(x) = x\sigma(\beta x)
 ```
 """

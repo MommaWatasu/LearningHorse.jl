@@ -16,7 +16,7 @@ julia> fit!(model, x, t)
    0.5022766549841176
  154.43624186616267
 
-julia> predict(model, x, t)
+julia> model(x)
 20-element Vector{Float64}:
  188.64541774549468
  187.30088075704523

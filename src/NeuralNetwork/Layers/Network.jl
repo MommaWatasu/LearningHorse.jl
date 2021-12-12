@@ -101,6 +101,8 @@ function (D::Dense)(X::AbstractVecOrMat)
     σ.(muladd(W, X, b))
 end
 
+(D::Dense)(x::AbstractArray) = reshape(D(reshape(x, size(x, 1), :)), :, size(x)[2:end]...)
+
 """
     Flatten()
 This layer change the dimentions Image to Vector.
