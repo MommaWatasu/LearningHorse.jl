@@ -1,5 +1,7 @@
 # LearningHorse
 
+# Note: I'm sorry, this repository has been moved to [HorseML.jl](https://github.com/MommaWatasu/HorseML.jl) due to my account name change.
+
 ![logo](https://user-images.githubusercontent.com/76277264/105711246-a16efc00-5f5b-11eb-9e1e-e93955250bd8.png)
 
 |GitHub Actions|Coveralls|CodeCov|Docs|
